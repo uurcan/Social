@@ -9,7 +9,7 @@ public class FeedDataFactory extends DataSource.Factory {
     private MutableLiveData<FeedDataSource> mutableLiveData;
     private AppController appController;
 
-    public FeedDataFactory(AppController appController) {
+    FeedDataFactory(AppController appController) {
         this.appController = appController;
         mutableLiveData = new MutableLiveData<>();
     }
@@ -21,7 +21,7 @@ public class FeedDataFactory extends DataSource.Factory {
         return feedDataSource;
     }
 
-    public MutableLiveData<FeedDataSource> getMutableLiveData() {
+    MutableLiveData<FeedDataSource> getMutableLiveData() {
         return mutableLiveData;
     }
 }

@@ -3,8 +3,6 @@ package com.example.mvvmapplication.view;
 import android.app.Application;
 import android.content.Context;
 
-import androidx.core.content.ContextCompat;
-
 import com.example.mvvmapplication.network.RestApi;
 import com.example.mvvmapplication.network.RestApiFactory;
 

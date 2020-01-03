@@ -50,7 +50,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
     }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof FeedItemViewHolder){ 
+        if (holder instanceof FeedItemViewHolder){
             ((FeedItemViewHolder)holder).bindTo(Objects.requireNonNull(getItem(position)));
         }else {
             ((NetworkStateItemViewHolder)holder).bindView(networkState);
