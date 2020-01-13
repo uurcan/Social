@@ -1,4 +1,4 @@
-package com.example.mvvmapplication.Utils;
+package com.example.mvvmapplication;
 
 import android.annotation.SuppressLint;
 

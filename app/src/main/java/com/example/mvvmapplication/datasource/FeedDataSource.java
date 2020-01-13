@@ -11,9 +11,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
 import com.example.mvvmapplication.model.Article;
-import com.example.mvvmapplication.Utils.Constants;
+import com.example.mvvmapplication.Constants;
 import com.example.mvvmapplication.model.Feed;
-import com.example.mvvmapplication.Utils.NetworkState;
+import com.example.mvvmapplication.NetworkState;
 import com.example.mvvmapplication.view.AppController;
 
 public class FeedDataSource extends PageKeyedDataSource<Long, Article> implements Constants {

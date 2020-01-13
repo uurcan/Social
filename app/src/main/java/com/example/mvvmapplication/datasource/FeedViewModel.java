@@ -9,7 +9,7 @@ import androidx.paging.PagedList;
 
 
 import com.example.mvvmapplication.model.Article;
-import com.example.mvvmapplication.Utils.NetworkState;
+import com.example.mvvmapplication.NetworkState;
 import com.example.mvvmapplication.view.AppController;
 
 import java.util.concurrent.Executor;
