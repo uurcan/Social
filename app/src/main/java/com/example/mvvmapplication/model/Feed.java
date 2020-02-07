@@ -14,8 +14,8 @@ public class Feed implements Parcelable {
     private long totalResults;
     private List<Article> articles;
 
- 
-    protected Feed(Parcel in) {
+
+    Feed(Parcel in) {
         id = ApplicationUtils.getRandomNumber();
         status = in.readString();
         totalResults = in.readLong();
