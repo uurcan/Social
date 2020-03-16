@@ -23,7 +23,7 @@ public class FeedDataSource extends PageKeyedDataSource<Long, Article> implement
     private AppController appController;
     private static final String TAG = FeedDataSource.class.getSimpleName();
 
-    FeedDataSource(AppController appController){
+    public FeedDataSource(AppController appController){
         this.appController = appController;
         netWorkState = new MutableLiveData<>();
         initialLoading = new MutableLiveData<>();

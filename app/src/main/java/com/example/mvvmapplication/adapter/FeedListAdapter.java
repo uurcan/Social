@@ -40,6 +40,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
         if (viewType == TYPE_PROGRESS){
             NetworkItemBinding headerBinding = NetworkItemBinding.inflate(inflater,parent,false);
             return new NetworkStateItemViewHolder(headerBinding);
+            //todo : progress bar not working ?
         }else {
             FeedItemBinding feedBinding = FeedItemBinding.inflate(inflater,parent,false);
             return new FeedItemViewHolder(feedBinding);
@@ -123,6 +124,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
                     ApplicationUtils.getTime(article.getPublishedAt())));
             feedItemBinding.feedItemDescription.setText(article.getDescription());
             Picasso.get().load(article.getUrlToImage()).resize(250,200).into(feedItemBinding.itemDetailImage);
+            Picasso.get().load(article.getUrlToImage()).resize(48,48).into(feedItemBinding.itemProfileImage);
         }
     }
 }

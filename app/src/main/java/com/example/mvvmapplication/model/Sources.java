@@ -3,11 +3,9 @@ package com.example.mvvmapplication.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Source implements Parcelable {
-
+public class Sources implements Parcelable {
     private String name;
-
-    protected Source(Parcel in) {
+    public Sources(Parcel in) {
         name = in.readString();
     }
 
@@ -21,15 +19,15 @@ public class Source implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Source> CREATOR = new Creator<Source>() {
+    public static final Creator<Sources> CREATOR = new Creator<Sources>() {
         @Override
-        public Source createFromParcel(Parcel in) {
-            return new Source(in);
+        public Sources createFromParcel(Parcel in) {
+            return new Sources(in);
         }
 
         @Override
-        public Source[] newArray(int size) {
-            return new Source[size];
+        public Sources[] newArray(int size) {
+            return new Sources[size];
         }
     };
 

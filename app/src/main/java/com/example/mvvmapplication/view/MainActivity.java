@@ -3,14 +3,19 @@ package com.example.mvvmapplication.view;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import androidx.lifecycle.Observer;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 
+import com.example.mvvmapplication.Constants;
 import com.example.mvvmapplication.databinding.FeedActivityBinding;
 import com.example.mvvmapplication.datasource.FeedViewModel;
 import com.example.mvvmapplication.adapter.FeedListAdapter;
 import com.example.mvvmapplication.R;
+
+import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -24,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
         feedViewModel = new FeedViewModel(AppController.create(this));
         feedItemBinding.listFeed.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         feedListAdapter = new FeedListAdapter(getApplicationContext());
-        feedViewModel.getPagedListLiveData().observe(this,pagedList -> feedListAdapter.submitList(pagedList));
+        feedViewModel.getPagedListLiveData().observe(this, pagedList -> feedListAdapter.submitList(pagedList));
         feedViewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         feedItemBinding.listFeed.setAdapter(feedListAdapter);
+
     }
 }

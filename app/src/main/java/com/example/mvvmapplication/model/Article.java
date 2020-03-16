@@ -8,13 +8,11 @@ import androidx.recyclerview.widget.DiffUtil;
 
 import com.example.mvvmapplication.ApplicationUtils;
 
-import javax.xml.transform.Source;
+
 
 
 public class Article implements Parcelable {
-
     private static int increment = 0;
-
     private long id;
     private String author;
     private String title;
@@ -22,11 +20,7 @@ public class Article implements Parcelable {
     private String url;
     private String urlToImage;
     private String publishedAt;
-    private Source source;
-
-    public Article() {
-        id = ++increment;
-    }
+    private Sources source;
 
 
     protected Article(Parcel in) {
@@ -37,7 +31,8 @@ public class Article implements Parcelable {
         url = in.readString();
         urlToImage = in.readString();
         publishedAt = in.readString();
-        source = in.readParcelable(Source.class.getClassLoader());
+        source = in.readParcelable(Sources.class.getClassLoader());
+        id= ++increment;
     }
 
     @Override
@@ -123,11 +118,11 @@ public class Article implements Parcelable {
         this.publishedAt = publishedAt;
     }
 
-    public Source getSource() {
+    public Sources getSource() {
         return source;
     }
 
-    public void setSource(Source source) {
+    public void setSource(Sources source) {
         this.source = source;
     }
 
