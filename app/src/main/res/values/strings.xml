@@ -3,4 +3,10 @@
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum est gravida nulla fermentum, fringilla suscipit mauris faucibus. Aliquam lacinia ex at purus lobortis hendrerit.</string>
     <string name="item_title">%s posted %s</string>
     <string name="SocialText">Social Application</string>
+    <string name="text_socialize">Socialize !</string>
+    <string name="textUsername">Username</string>
+    <string name="textSignUp">Sign Up</string>
+    <string name="textForgotPassword">Forgot Password?</string>
+    <string name="textLogin">Login</string>
+    <string name="textPassword">Password</string>
 </resources>

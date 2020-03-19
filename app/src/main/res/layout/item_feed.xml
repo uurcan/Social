@@ -3,7 +3,7 @@
     <data class="FeedItemBinding" />
 
     <LinearLayout
-        android:background="@drawable/shadow_effect"
+        android:background="#000"
         android:layout_margin="5dp"
         android:paddingTop="10dp"
         android:paddingBottom="15dp"
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/feed_item_title"
                     android:text="Current User"
-                    android:textColor="@color/primary_text"/>
+                    android:textColor="@color/white"/>
                 <TextView
                     android:text="14:30 UTC"
                     android:id="@+id/feed_item_time"
@@ -45,13 +45,13 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/feed_item_title"
                     android:layout_marginTop="3dp"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/white"
                     android:textSize="14sp"/>
             </RelativeLayout>
         </RelativeLayout>
         <TextView
             android:visibility="visible"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/white"
             android:paddingLeft="10dp"
             android:lineSpacingExtra="2dp"
             android:layout_marginTop="15dp"
@@ -92,7 +92,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="-2dp"
                 android:text="17"
-                android:textColor="@color/title_txt"
+                android:textColor="@color/white"
                 android:textSize="12sp"/>
             <TextView
                 android:id="@+id/feed_item_comments"
@@ -102,7 +102,7 @@
                 android:layout_marginLeft="22dp"
                 android:layout_marginTop="-2dp"
                 android:text="7 Comments"
-                android:textColor="@color/title_txt"
+                android:textColor="@color/white"
                 android:textSize="12sp"/>
             <TextView
                 android:id="@+id/item_shares"
@@ -112,7 +112,7 @@
                 android:layout_marginRight="22dp"
                 android:layout_marginTop="-2dp"
                 android:text="5 Shares"
-                android:textColor="@color/title_txt"
+                android:textColor="@color/white"
                 android:textSize="12sp"/>
         </RelativeLayout>
 

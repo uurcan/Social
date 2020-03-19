@@ -6,7 +6,6 @@
             <corners android:radius="2dp" />
         </shape>
     </item>
-
     <item
         android:left="0dp"
         android:right="0dp"
