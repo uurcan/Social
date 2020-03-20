@@ -30,7 +30,7 @@
     <color name="color_like_normal">#606770</color>
     <color name="color_like_selected">#4080ff</color>
     <color name="bg_color">#dcdee3</color>
-
+    <color name="blue">#1c2e4a</color>
 
     <!--shimmer-->
     <color name="demo_light_transparent">#16000000</color>
