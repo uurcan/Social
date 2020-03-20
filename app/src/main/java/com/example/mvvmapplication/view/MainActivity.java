@@ -9,14 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 
-import com.example.mvvmapplication.Constants;
 import com.example.mvvmapplication.databinding.FeedActivityBinding;
 import com.example.mvvmapplication.datasource.FeedViewModel;
 import com.example.mvvmapplication.adapter.FeedListAdapter;
 import com.example.mvvmapplication.R;
-
-import java.io.File;
-
 
 public class MainActivity extends AppCompatActivity {
     FeedViewModel feedViewModel;

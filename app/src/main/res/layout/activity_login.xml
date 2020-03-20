@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout tools:context=".view.LoginActivity"
+<RelativeLayout
+    android:background="@color/blue"
+    tools:context=".view.LoginActivity"
     android:id="@+id/loginRootView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
-    <ImageView
-        android:contentDescription="@null"
-        android:src="@drawable/temp_logo"
-        android:id="@+id/socialLogoImageView"
-        android:layout_centerInParent="true"
-        android:layout_width="60dp"
-        android:layout_height="60dp"/>
-    <TextView
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:text="@string/app_name"
-        android:id="@+id/textViewSocialLogin"
-        android:layout_width="wrap_content"
-        android:layout_below="@id/socialLogoImageView"
-        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:id="@+id/layoutFirstAppear"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:contentDescription="@null"
+            android:src="@drawable/application_logo_white"
+            android:id="@+id/socialLogoImageView"
+            android:layout_centerInParent="true"
+            android:layout_width="60dp"
+            android:layout_height="60dp"/>
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:text="@string/app_name"
+            android:id="@+id/textViewSocialLogin"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/socialLogoImageView"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:id="@+id/afterAnimationProgress"
@@ -33,13 +42,13 @@
         android:foregroundGravity="bottom"
         android:indeterminate="true"
         android:theme="?android:attr/progressBarStyle" />
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/animationEndView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
         android:visibility="gone">
         <TextView
@@ -54,16 +63,13 @@
             android:id="@+id/txtSocializeLogin"
             android:text="@string/text_socialize"
             android:layout_width="match_parent"
-            android:layout_below="@id/loginTextView"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="25sp"
             android:textStyle="bold"/>
         <LinearLayout
-            android:layout_above="@id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/txtSocializeLogin"
             android:gravity="center"
             android:orientation="vertical">
             <com.google.android.material.textfield.TextInputEditText
@@ -94,16 +100,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </FrameLayout>
+            <LinearLayout
+                android:layout_marginTop="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <Button
+                android:layout_marginBottom="30dp"
+                android:textColor="@color/white"
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_margin="5dp"
+                android:text="@string/textLogin"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:background="@drawable/login_button"/>
         </LinearLayout>
-        <Button
-            android:textColor="@color/white"
-            android:id="@+id/loginButton"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_margin="5dp"
-            android:text="@string/textLogin"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:background="@drawable/login_button"/>
-    </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
