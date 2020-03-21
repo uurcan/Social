@@ -69,6 +69,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtUsername = findViewById(R.id.usernameEditText);
         edtPassword = findViewById(R.id.passwordEditText);
         Button loginButton = findViewById(R.id.loginButton);
+        TextView textSignUp = findViewById(R.id.txt_sign_up);
+        textSignUp.setOnClickListener(this);
         loginButton.setOnClickListener(this);
     }
     private void startAnimation(){
@@ -100,12 +102,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         //todo: login will be called from google firebase
-        if (v.getId() == R.id.loginButton){
-            if (Objects.requireNonNull(edtUsername.getText()).toString().equals("admin")&&
-                Objects.requireNonNull(edtPassword.getText()).toString().equals("pass"))
-                startActivity(new Intent(this,MainActivity.class));
-            else
-                Toast.makeText(this,"Wrong credentials !",Toast.LENGTH_LONG).show();
+        switch (v.getId()){
+            case R.id.loginButton:
+                if (Objects.requireNonNull(edtUsername.getText()).toString().equals("admin")&&
+                    Objects.requireNonNull(edtPassword.getText()).toString().equals("pass")){
+                    startActivity(new Intent(this,MainActivity.class));
+                }
+                else {
+                    Toast.makeText(this, "Wrong credentials !", Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.txt_sign_up:
+                setContentView(R.layout.activity_signup);
+                break;
         }
     }
 }
