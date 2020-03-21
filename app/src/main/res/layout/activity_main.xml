@@ -1,23 +1,15 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <data class="FeedActivityBinding" />
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/black"
             android:orientation="vertical">
-
-
             <androidx.recyclerview.widget.RecyclerView
                 tools:listitem="@layout/item_feed"
                 android:id="@+id/list_feed"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
         </LinearLayout>
-
-
 </layout>

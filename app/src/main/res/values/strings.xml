@@ -9,4 +9,8 @@
     <string name="textForgotPassword">Forgot Password?</string>
     <string name="textLogin">Login</string>
     <string name="textPassword">Password</string>
+    <string name="textEmail">Email</string>
+    <string name="textLoginWithFacebook">Login With Facebook</string>
+    <string name="textLoginWithGoogle">Login With Google</string>
+    <string name="textAlreadyAMember">Already a member ? Sign in.</string>
 </resources>
