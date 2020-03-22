@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.view.Window;
@@ -17,24 +18,37 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.mvvmapplication.R;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static android.view.View.GONE;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener,FirebaseAuth.AuthStateListener{
     private ImageView imageViewLogo;
     private TextView textViewLogin;
     private ProgressBar loadingProgressBar;
     private LinearLayout animationEndLayout;
     private RelativeLayout rootLayout;
     private TextInputEditText edtUsername,edtPassword;
+    private List<AuthUI.IdpConfig> providers;
+    private FirebaseAuth firebaseAuth;
+    private static final int REQUEST_CODE = 4978;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
+        firebaseAuth = FirebaseAuth.getInstance();
         initializeViews();
         new CountDownTimer(5000,1000) {
             @Override
@@ -98,23 +113,68 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
-    @Override
+       @Override
     public void onClick(View v) {
-        //todo: login will be called from google firebase
         switch (v.getId()){
             case R.id.loginButton:
-                if (Objects.requireNonNull(edtUsername.getText()).toString().equals("admin")&&
-                    Objects.requireNonNull(edtPassword.getText()).toString().equals("pass")){
-                    startActivity(new Intent(this,MainActivity.class));
-                }
-                else {
-                    Toast.makeText(this, "Wrong credentials !", Toast.LENGTH_LONG).show();
-                }
+                firebaseLogin();
                 break;
             case R.id.txt_sign_up:
-                setContentView(R.layout.activity_signup);
+                providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
+                        new AuthUI.IdpConfig.FacebookBuilder().build(),
+                        new AuthUI.IdpConfig.GoogleBuilder().build());
+                showSignInOptions();
                 break;
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE){
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            if (resultCode == RESULT_OK){
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    System.out.println(user.getEmail() + " "+ user.getDisplayName());
+                    startActivity(new Intent(this,MainActivity.class));
+                }
+            }else {
+                if (response != null) {
+                    System.out.println(response.getError() + " "+ requestCode);
+                }
+            }
+        }
+    }
+    private void showSignInOptions(){
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .setTheme(R.style.FirebaseAuthTheme)
+                .build(),REQUEST_CODE);
+    }
+    private void firebaseLogin() {
+        String email = Objects.requireNonNull(edtUsername.getText()).toString();
+        String password = Objects.requireNonNull(edtPassword.getText()).toString();
+        if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)) {
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    startActivity(new Intent(this,MainActivity.class));
+                } else {
+                    Toast.makeText(LoginActivity.this, "Wrong Credentials !", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else Toast.makeText(this,"Empty value",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.onAuthStateChanged(firebaseAuth);
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        if (firebaseAuth.getCurrentUser() != null){
+            System.out.println(firebaseAuth.getCurrentUser());
         }
     }
 }

@@ -5,6 +5,9 @@ import android.content.Context;
 
 import com.example.mvvmapplication.network.RestApi;
 import com.example.mvvmapplication.network.RestApiFactory;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import io.reactivex.Scheduler;
 
@@ -17,6 +20,12 @@ public class AppController extends Application {
     public static AppController get(Context context){
         return  (AppController) context.getApplicationContext();
     }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
     public static AppController create(Context context) {
         return AppController.get(context);
     }
