@@ -43,6 +43,7 @@
         android:indeterminate="true"
         android:theme="?android:attr/progressBarStyle" />
     <LinearLayout
+        android:gravity="center"
         android:id="@+id/animationEndView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,9 +77,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/usernameEditText"
-                android:hint="@string/textUsername"
+                android:hint="@string/textEmail"
                 android:textSize="15sp"/>
             <com.google.android.material.textfield.TextInputEditText
+                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/passwordEditText"

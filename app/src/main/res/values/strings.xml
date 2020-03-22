@@ -13,4 +13,7 @@
     <string name="textLoginWithFacebook">Login With Facebook</string>
     <string name="textLoginWithGoogle">Login With Google</string>
     <string name="textAlreadyAMember">Already a member ? Sign in.</string>
+    <string name="facebook_application_id" translatable="false">693027334838162</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">b5929bbf404069394314f28679a70ab3</string>
+    <string name="textLogOut">Log Out</string>
 </resources>
