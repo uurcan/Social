@@ -16,4 +16,6 @@
     <string name="facebook_application_id" translatable="false">693027334838162</string>
     <string name="facebook_login_protocol_scheme" translatable="false">b5929bbf404069394314f28679a70ab3</string>
     <string name="textLogOut">Log Out</string>
+    <string name="textResetPassword">Reset Password</string>
+    <string name="textGoBack">Go Back</string>
 </resources>

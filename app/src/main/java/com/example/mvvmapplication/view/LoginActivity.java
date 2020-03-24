@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
@@ -26,10 +27,7 @@ import androidx.core.content.ContextCompat;
 import com.example.mvvmapplication.R;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -48,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextInputEditText edtUsername,edtPassword;
     private List<AuthUI.IdpConfig> providers;
     private FirebaseAuth firebaseAuth;
+    private boolean isVisible = false;
     private static final int REQUEST_CODE = 4978;
 
     @Override
@@ -85,6 +84,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtPassword = findViewById(R.id.passwordEditText);
         Button loginButton = findViewById(R.id.loginButton);
         TextView textSignUp = findViewById(R.id.txt_sign_up);
+        TextView textViewForgotPassword = findViewById(R.id.txt_forgot_pass);
+        ImageView imageViewShowPass = findViewById(R.id.imgShowPassword);
+        imageViewShowPass.setOnClickListener(this);
+        textViewForgotPassword.setOnClickListener(this);
         textSignUp.setOnClickListener(this);
         loginButton.setOnClickListener(this);
     }
@@ -125,6 +128,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         new AuthUI.IdpConfig.GoogleBuilder().build());
                 showSignInOptions();
                 break;
+            case R.id.txt_forgot_pass:
+                startActivity(new Intent(getApplicationContext(),ForgotPasswordActivity.class));
+                break;
+            case R.id.imgShowPassword:
+                if (!isVisible){
+                    edtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                } else {
+                    edtPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                }
+                isVisible = !isVisible;
+                break;
         }
     }
     @Override
@@ -162,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(LoginActivity.this, "Wrong Credentials !", Toast.LENGTH_SHORT).show();
                 }
             });
-        }else Toast.makeText(this,"Empty value",Toast.LENGTH_LONG).show();
+        } else Toast.makeText(this,"Empty value",Toast.LENGTH_LONG).show();
     }
 
     @Override

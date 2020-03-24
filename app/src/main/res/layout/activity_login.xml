@@ -79,14 +79,29 @@
                 android:id="@+id/usernameEditText"
                 android:hint="@string/textEmail"
                 android:textSize="15sp"/>
-            <com.google.android.material.textfield.TextInputEditText
-                android:inputType="textPassword"
+            <LinearLayout
+                android:layout_marginTop="25dp"
+                android:weightSum="8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/passwordEditText"
-                android:layout_marginTop="25dp"
-                android:hint="@string/textPassword"
-                android:textSize="15sp"/>
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="textPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/passwordEditText"
+                    android:hint="@string/textPassword"
+                    android:layout_weight="7"
+                    android:textSize="15sp"/>
+                <ImageView
+                    android:layout_gravity="center"
+                    android:src="@drawable/show_pass"
+                    android:contentDescription="@null"
+                    android:layout_weight="1"
+                    android:id="@+id/imgShowPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
             <FrameLayout
                 android:padding="5dp"
                 android:layout_marginTop="10dp"
