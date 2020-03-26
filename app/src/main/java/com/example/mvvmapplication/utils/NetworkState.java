@@ -1,4 +1,4 @@
-package com.example.mvvmapplication;
+package com.example.mvvmapplication.utils;
 
 public class  NetworkState {
     public enum Status{

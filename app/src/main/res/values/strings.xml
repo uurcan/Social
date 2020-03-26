@@ -18,4 +18,5 @@
     <string name="textLogOut">Log Out</string>
     <string name="textResetPassword">Reset Password</string>
     <string name="textGoBack">Go Back</string>
+    <string name="textRememberMe">Remember Me</string>
 </resources>

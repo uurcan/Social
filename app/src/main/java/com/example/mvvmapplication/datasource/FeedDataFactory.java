@@ -3,20 +3,20 @@ package com.example.mvvmapplication.datasource;
 import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
 
-import com.example.mvvmapplication.view.AppController;
+import com.example.mvvmapplication.Application;
 
 public class FeedDataFactory extends DataSource.Factory {
     private MutableLiveData<FeedDataSource> mutableLiveData;
-    private AppController appController;
+    private Application application;
 
-    FeedDataFactory(AppController appController) {
-        this.appController = appController;
+    FeedDataFactory(Application application) {
+        this.application = application;
         mutableLiveData = new MutableLiveData<>();
     }
 
     @Override
     public DataSource create() {
-        FeedDataSource feedDataSource = new FeedDataSource(appController);
+        FeedDataSource feedDataSource = new FeedDataSource(application);
         mutableLiveData.postValue(feedDataSource);
         return feedDataSource;
     }

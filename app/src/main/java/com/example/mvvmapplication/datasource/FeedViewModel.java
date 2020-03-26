@@ -9,24 +9,24 @@ import androidx.paging.PagedList;
 
 
 import com.example.mvvmapplication.model.Article;
-import com.example.mvvmapplication.NetworkState;
-import com.example.mvvmapplication.view.AppController;
+import com.example.mvvmapplication.utils.NetworkState;
+import com.example.mvvmapplication.Application;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class FeedViewModel extends ViewModel {
-    private AppController appController;
+    private Application application;
     private LiveData<PagedList<Article>> articleLiveData;
     private LiveData<NetworkState> networkState;
 
-    public FeedViewModel(@NonNull AppController appController) {
-        this.appController = appController;
+    public FeedViewModel(@NonNull Application application) {
+        this.application = application;
         initializeViewModel();
     }
 
     private void initializeViewModel() {
-        FeedDataFactory feedDataFactory = new FeedDataFactory(appController);
+        FeedDataFactory feedDataFactory = new FeedDataFactory(application);
         Executor executor = Executors.newFixedThreadPool(5);
         networkState = Transformations.switchMap(feedDataFactory.getMutableLiveData(),
                 FeedDataSource::getNetWorkState);

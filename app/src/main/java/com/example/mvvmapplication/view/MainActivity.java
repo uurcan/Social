@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,6 +16,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.mvvmapplication.Application;
+import com.example.mvvmapplication.constants.Constants;
 import com.example.mvvmapplication.databinding.FeedActivityBinding;
 import com.example.mvvmapplication.datasource.FeedViewModel;
 import com.example.mvvmapplication.adapter.FeedListAdapter;
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeFeed(){
         feedItemBinding = DataBindingUtil.setContentView(this,R.layout.activity_main);
-        feedViewModel = new FeedViewModel(AppController.create(this));
+        feedViewModel = new FeedViewModel(Application.create(this));
         feedItemBinding.listFeed.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         feedListAdapter = new FeedListAdapter(getApplicationContext());
         feedViewModel.getPagedListLiveData().observe(this, pagedList -> feedListAdapter.submitList(pagedList));
@@ -62,5 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 .signOut(MainActivity.this)
                 .addOnCompleteListener(task -> startActivity(new Intent(this,LoginActivity.class))).addOnFailureListener(e ->
                 Toast.makeText(getApplicationContext(),"Fail while logging out..",Toast.LENGTH_LONG).show());
+        getApplicationContext().getSharedPreferences(Constants.AUTH_PERSISTENCE, Context.MODE_PRIVATE).edit().clear().apply();
     }
 }

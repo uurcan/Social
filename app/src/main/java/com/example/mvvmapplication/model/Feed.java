@@ -3,7 +3,7 @@ package com.example.mvvmapplication.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.mvvmapplication.ApplicationUtils;
+import com.example.mvvmapplication.utils.ApplicationUtils;
 
 import java.util.List;
 
