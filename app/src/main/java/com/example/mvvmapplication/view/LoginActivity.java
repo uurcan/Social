@@ -1,7 +1,9 @@
 package com.example.mvvmapplication.view;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,6 +14,7 @@ import android.view.ViewPropertyAnimator;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -25,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.mvvmapplication.R;
+import com.example.mvvmapplication.constants.Constants;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.textfield.TextInputEditText;
@@ -37,7 +41,7 @@ import java.util.Objects;
 
 import static android.view.View.GONE;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener,FirebaseAuth.AuthStateListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener,FirebaseAuth.AuthStateListener,Constants{
     private ImageView imageViewLogo;
     private TextView textViewLogin;
     private ProgressBar loadingProgressBar;
@@ -46,6 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextInputEditText edtUsername,edtPassword;
     private List<AuthUI.IdpConfig> providers;
     private FirebaseAuth firebaseAuth;
+    private CheckBox chkRememberMe;
     private boolean isVisible = false;
     private static final int REQUEST_CODE = 4978;
 
@@ -82,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textViewLogin = findViewById(R.id.textViewSocialLogin);
         edtUsername = findViewById(R.id.usernameEditText);
         edtPassword = findViewById(R.id.passwordEditText);
+        chkRememberMe = findViewById(R.id.chk_remember_me);
         Button loginButton = findViewById(R.id.loginButton);
         TextView textSignUp = findViewById(R.id.txt_sign_up);
         TextView textViewForgotPassword = findViewById(R.id.txt_forgot_pass);
@@ -166,6 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .build(),REQUEST_CODE);
     }
     private void firebaseLogin() {
+        initializeSharedPreferencesForFirebaseAuthenticationFunctionality();
         String email = Objects.requireNonNull(edtUsername.getText()).toString();
         String password = Objects.requireNonNull(edtPassword.getText()).toString();
         if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)) {
@@ -179,6 +186,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else Toast.makeText(this,"Empty value",Toast.LENGTH_LONG).show();
     }
 
+    private void initializeSharedPreferencesForFirebaseAuthenticationFunctionality() {
+        SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences(AUTH_PERSISTENCE, Context.MODE_PRIVATE)
+                .edit();
+        if (chkRememberMe.isChecked()) {
+            editor.putBoolean(AUTO_SIGN, true);
+        } else {
+            editor.putBoolean(AUTO_SIGN,false);
+        } editor.apply();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -187,7 +204,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        if (firebaseAuth.getCurrentUser() != null){
+        if (getApplicationContext().getSharedPreferences(AUTH_PERSISTENCE,Context.MODE_PRIVATE).getBoolean(AUTO_SIGN,false)){
+            if (firebaseAuth.getCurrentUser() != null) {
+                startActivity(new Intent(this, MainActivity.class));
+            }
+        } else {
             System.out.println(firebaseAuth.getCurrentUser());
         }
     }

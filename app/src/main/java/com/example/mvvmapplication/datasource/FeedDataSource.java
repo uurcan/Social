@@ -11,20 +11,20 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.paging.PageKeyedDataSource;
 
 import com.example.mvvmapplication.model.Article;
-import com.example.mvvmapplication.Constants;
+import com.example.mvvmapplication.constants.Constants;
 import com.example.mvvmapplication.model.Feed;
-import com.example.mvvmapplication.NetworkState;
-import com.example.mvvmapplication.view.AppController;
+import com.example.mvvmapplication.utils.NetworkState;
+import com.example.mvvmapplication.Application;
 
 public class FeedDataSource extends PageKeyedDataSource<Long, Article> implements Constants {
 
     private MutableLiveData<NetworkState> netWorkState;
     private MutableLiveData<NetworkState> initialLoading;
-    private AppController appController;
+    private Application application;
     private static final String TAG = FeedDataSource.class.getSimpleName();
 
-    public FeedDataSource(AppController appController){
-        this.appController = appController;
+    public FeedDataSource(Application application){
+        this.application = application;
         netWorkState = new MutableLiveData<>();
         initialLoading = new MutableLiveData<>();
     }
@@ -35,7 +35,7 @@ public class FeedDataSource extends PageKeyedDataSource<Long, Article> implement
         netWorkState.postValue(NetworkState.LOADING);
         initialLoading.postValue(NetworkState.LOADING);
 
-        appController.getRestApi().fetchFeed(QUERY,API_KEY,1,params.requestedLoadSize).enqueue(new Callback<Feed>() {
+        application.getRestApi().fetchFeedByLanguage("tr",API_KEY,1,params.requestedLoadSize).enqueue(new Callback<Feed>() {
             @Override
             public void onResponse(@NonNull  Call<Feed> call,@NonNull Response<Feed> response) {
                if (response.isSuccessful()){
@@ -44,7 +44,7 @@ public class FeedDataSource extends PageKeyedDataSource<Long, Article> implement
                        initialLoading.postValue(NetworkState.LOADED);
                        netWorkState.postValue(NetworkState.LOADED);
                    }
-               }else {
+               } else {
                    initialLoading.postValue(new NetworkState(NetworkState.Status.FAILED,response.message()));
                    netWorkState.postValue(new NetworkState(NetworkState.Status.FAILED, response.message()));
                }
@@ -66,7 +66,7 @@ public class FeedDataSource extends PageKeyedDataSource<Long, Article> implement
     public void loadAfter(@NonNull final LoadParams<Long> params, @NonNull final LoadCallback<Long, Article> callback) {
         Log.i(TAG,"Loading Range "+ params.key+ "Count "+params.requestedLoadSize);
         netWorkState.postValue(NetworkState.LOADING);
-        appController.getRestApi().fetchFeed(QUERY,API_KEY,params.key,params.requestedLoadSize).enqueue(new Callback<Feed>() {
+        application.getRestApi().fetchFeedByLanguage("tr",API_KEY,params.key,params.requestedLoadSize).enqueue(new Callback<Feed>() {
             @Override
             public void onResponse(@NonNull Call<Feed> call,@NonNull Response<Feed> response) {
                 if (response.isSuccessful()){
@@ -91,4 +91,5 @@ public class FeedDataSource extends PageKeyedDataSource<Long, Article> implement
     MutableLiveData<NetworkState> getNetWorkState() {
         return netWorkState;
     }
+
 }

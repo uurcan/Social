@@ -1,4 +1,4 @@
-package com.example.mvvmapplication;
+package com.example.mvvmapplication.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;

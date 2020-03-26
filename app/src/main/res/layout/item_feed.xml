@@ -5,7 +5,6 @@
     <LinearLayout
         android:background="#000"
         android:layout_margin="5dp"
-        android:paddingTop="10dp"
         android:paddingBottom="15dp"
         android:orientation="vertical"
         android:layout_marginBottom="15dp"
@@ -17,19 +16,10 @@
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <com.example.mvvmapplication.CircleImageView
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:src="@drawable/ic_placeholder"
-                android:id="@+id/item_profile_image"
-                android:layout_alignParentLeft="true"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_toRightOf="@+id/item_profile_image">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:textSize="14sp"
@@ -56,12 +46,13 @@
             android:lineSpacingExtra="2dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"
-            android:layout_marginLeft="3dp"
             android:id="@+id/feed_item_description"
             android:layout_width="wrap_content"
             android:text="@string/lorem_ipsum"
             android:layout_height="wrap_content"/>
         <ImageView
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:id="@+id/item_detail_image"
             android:src="@drawable/temp_background"
             android:scaleType="fitXY"

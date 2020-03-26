@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.example.mvvmapplication.ApplicationUtils;
+import com.example.mvvmapplication.utils.ApplicationUtils;
 
 
 

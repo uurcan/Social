@@ -13,8 +13,8 @@ import androidx.core.content.ContextCompat;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.mvvmapplication.R;
-import com.example.mvvmapplication.ApplicationUtils;
-import com.example.mvvmapplication.NetworkState;
+import com.example.mvvmapplication.utils.ApplicationUtils;
+import com.example.mvvmapplication.utils.NetworkState;
 import com.example.mvvmapplication.databinding.FeedItemBinding;
 import com.example.mvvmapplication.databinding.NetworkItemBinding;
 import com.example.mvvmapplication.model.Article;
@@ -111,20 +111,14 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
             this.feedItemBinding = feedBinding;
         }
         void bindTo(Article article){
-            feedItemBinding.itemProfileImage.setVisibility(View.VISIBLE);
             feedItemBinding.feedItemDescription.setVisibility(View.VISIBLE);
             String author = article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor();
             String titleString = String.format(context.getString(R.string.item_title),author,article.getTitle());
-            SpannableString spannableString = new SpannableString(titleString);
-            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(context.getApplicationContext(),R.color.secondary_text)),
-                    titleString.lastIndexOf(author) + author.length() + 1, titleString.lastIndexOf(article.getTitle()) - 1,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            feedItemBinding.feedItemTitle.setText(spannableString);
+            feedItemBinding.feedItemTitle.setText(titleString);
             feedItemBinding.feedItemTime.setText(String.format("%s at %s", ApplicationUtils.getDate(article.getPublishedAt()),
                     ApplicationUtils.getTime(article.getPublishedAt())));
             feedItemBinding.feedItemDescription.setText(article.getDescription());
             Picasso.get().load(article.getUrlToImage()).resize(250,200).into(feedItemBinding.itemDetailImage);
-            Picasso.get().load(article.getUrlToImage()).resize(48,48).into(feedItemBinding.itemProfileImage);
         }
     }
 }
