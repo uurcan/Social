@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class Sources implements Parcelable {
     private String name;
-    public Sources(Parcel in) {
+    private Sources(Parcel in) {
         name = in.readString();
     }
 
@@ -31,11 +31,4 @@ public class Sources implements Parcelable {
         }
     };
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

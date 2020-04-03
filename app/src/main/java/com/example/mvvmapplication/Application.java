@@ -10,9 +10,9 @@ import io.reactivex.Scheduler;
 public class Application extends android.app.Application {
     private RestApi restApi;
     private Scheduler scheduler;
-    private static Application getInstance(Context context){
+    /** private static Application getInstance(Context context){
         return (Application) context.getApplicationContext();
-    }
+    }*/
     public static Application get(Context context){
         return  (Application) context.getApplicationContext();
     }

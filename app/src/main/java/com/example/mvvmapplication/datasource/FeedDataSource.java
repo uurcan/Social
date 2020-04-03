@@ -23,7 +23,7 @@ public class FeedDataSource extends PageKeyedDataSource<Long, Article> implement
     private Application application;
     private static final String TAG = FeedDataSource.class.getSimpleName();
 
-    public FeedDataSource(Application application){
+    FeedDataSource(Application application){
         this.application = application;
         netWorkState = new MutableLiveData<>();
         initialLoading = new MutableLiveData<>();
@@ -72,7 +72,7 @@ public class FeedDataSource extends PageKeyedDataSource<Long, Article> implement
                 if (response.isSuccessful()){
                     long nextKey;
                     if (response.body() != null) {
-                        nextKey = (params.key.equals(response.body().getTotalResults())) ? null : params.key + 1;
+                        nextKey = (params.key.equals(response.body().getTotalResults())) ? 0 : params.key + 1;
                         callback.onResult(response.body().getArticles(),nextKey);
                     }
                     netWorkState.postValue(NetworkState.LOADING);

@@ -14,7 +14,7 @@ public class Feed implements Parcelable {
     private long totalResults;
     private List<Article> articles;
 
-    Feed(Parcel in) {
+    private Feed(Parcel in) {
         id = ApplicationUtils.getRandomNumber();
         status = in.readString();
         totalResults = in.readLong();
@@ -55,27 +55,11 @@ public class Feed implements Parcelable {
         this.id = id;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Long getTotalResults() {
         return totalResults;
     }
 
-    public void setTotalResults(Long totalResults) {
-        this.totalResults = totalResults;
-    }
-
     public List<Article> getArticles() {
         return articles;
-    }
-
-    public void setArticles(List<Article> articles) {
-        this.articles = articles;
     }
 }

@@ -83,7 +83,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
         }
     }
 
-    private class NetworkStateItemViewHolder extends RecyclerView.ViewHolder{
+    private static class NetworkStateItemViewHolder extends RecyclerView.ViewHolder{
         private NetworkItemBinding networkItemBinding;
         NetworkStateItemViewHolder(NetworkItemBinding headerBinding) {
             super(headerBinding.getRoot());

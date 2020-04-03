@@ -8,9 +8,6 @@ import androidx.recyclerview.widget.DiffUtil;
 
 import com.example.mvvmapplication.utils.ApplicationUtils;
 
-
-
-
 public class Article implements Parcelable {
     private static int increment = 0;
     private long id;
@@ -23,7 +20,7 @@ public class Article implements Parcelable {
     private Sources source;
 
 
-    protected Article(Parcel in) {
+    private Article(Parcel in) {
         id = ApplicationUtils.getRandomNumber();
         author = in.readString();
         title = in.readString();
@@ -68,64 +65,25 @@ public class Article implements Parcelable {
         return id;
     }
 
-    protected void setId() {}
-
     public String getAuthor() {
         return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getUrlToImage() {
         return urlToImage;
     }
 
-    public void setUrlToImage(String urlToImage) {
-        this.urlToImage = urlToImage;
-    }
-
     public String getPublishedAt() {
         return publishedAt;
     }
-
-    public void setPublishedAt(String publishedAt) {
-        this.publishedAt = publishedAt;
-    }
-
-    public Sources getSource() {
-        return source;
-    }
-
-    public void setSource(Sources source) {
-        this.source = source;
-    }
-
 
     public static DiffUtil.ItemCallback<Article> DIFF_CALLBACK = new DiffUtil.ItemCallback<Article>() {
         @Override
