@@ -1,112 +1,122 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <data class="FeedItemBinding" />
-
-    <LinearLayout
-        android:background="#000"
-        android:layout_margin="5dp"
-        android:paddingBottom="15dp"
-        android:orientation="vertical"
-        android:layout_marginBottom="15dp"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<data class="FeedItemBinding" />
+    <androidx.cardview.widget.CardView
+        android:layout_marginLeft="11dp"
+        android:layout_marginRight="11dp"
+        android:layout_marginTop="7dp"
+        app:cardElevation="2dp"
+        app:cardCornerRadius="10dp"
+        android:layout_marginBottom="7dp"
         android:id="@+id/feed_root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <RelativeLayout
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
+            android:background="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                <ImageView
+                    android:contentDescription="@null"
+                    android:src="@drawable/temp_background"
+                    android:layout_width="match_parent"
+                    android:scaleType="centerCrop"
+                    android:layout_height="200dp"
+                    android:id="@+id/item_detail_image"/>
+                <ImageView
+                    android:contentDescription="@null"
+                    android:id="@+id/shadow_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_alignBottom="@+id/item_detail_image"
+                    android:layout_height="80dp"/>
                 <TextView
-                    android:textSize="14sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/feed_item_title"
-                    android:text="Current User"
-                    android:textColor="@color/white"/>
-                <TextView
-                    android:text="14:30 UTC"
-                    android:id="@+id/feed_item_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/feed_item_title"
-                    android:layout_marginTop="3dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:drawablePadding="10dp"
+                    android:id="@+id/txt_feed_author"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="@color/white"
-                    android:textSize="14sp"/>
-            </RelativeLayout>
-        </RelativeLayout>
-        <TextView
-            android:visibility="visible"
-            android:textColor="@color/white"
-            android:paddingLeft="10dp"
-            android:lineSpacingExtra="2dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="10dp"
-            android:id="@+id/feed_item_description"
-            android:layout_width="wrap_content"
-            android:text="@string/lorem_ipsum"
-            android:layout_height="wrap_content"/>
-        <ImageView
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/item_detail_image"
-            android:src="@drawable/temp_background"
-            android:scaleType="fitXY"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"/>
-        <RelativeLayout
-            android:layout_marginTop="2dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="15dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/item_image_reactions"
-                android:layout_width="55dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_reaction"
-                android:layout_height="14dp"/>
-            <TextView
-                android:layout_toRightOf="@+id/item_image_reactions"
-                android:id="@+id/feed_item_reactions"
+                    android:gravity="bottom"
+                    android:text="@string/textAuthor"
+                    android:layout_alignLeft="@+id/txt_feed_title"
+                    android:layout_alignStart="@id/txt_feed_title"
+                    android:layout_alignRight="@+id/layoutTimestamp"
+                    android:layout_alignTop="@id/layoutTimestamp"
+                    android:layout_alignEnd="@+id/layoutTimestamp"/>
+            <FrameLayout
+                android:background="@drawable/round_white"
+                android:id="@+id/layoutTimestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="-2dp"
-                android:text="17"
-                android:textColor="@color/white"
-                android:textSize="12sp"/>
-            <TextView
-                android:id="@+id/feed_item_comments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="22dp"
-                android:layout_marginTop="-2dp"
-                android:text="7 Comments"
-                android:textColor="@color/white"
-                android:textSize="12sp"/>
-            <TextView
-                android:id="@+id/item_shares"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_below="@id/item_detail_image"
+                android:padding="5dp"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="22dp"
-                android:layout_marginTop="-2dp"
-                android:text="5 Shares"
-                android:textColor="@color/white"
-                android:textSize="12sp"/>
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="-50dp">
+                <ImageView
+                    android:src="@drawable/ic_date"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
+                <TextView
+                    android:id="@+id/txt_publish_date"
+                    android:textColor="@color/grey"
+                    android:text="@string/textTempTimezone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="27dp"
+                    android:layout_marginRight="10dp"/>
+            </FrameLayout>
+            <TextView
+                android:id="@+id/txt_feed_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="bold"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:textColor="#262626"
+                android:textSize="17sp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/item_detail_image"
+                android:text="@string/app_name"/>
+            <TextView
+                android:id="@+id/txt_feed_description"
+                android:layout_below="@id/txt_feed_title"
+                android:text="@string/lorem_ipsum"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/txt_feed_source"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_below="@id/txt_feed_description"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="10dp"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="bold"
+                android:textColor="#262626"
+                android:maxLines="1"
+                android:drawablePadding="10dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="@string/textSource"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:id="@+id/txt_feed_time"
+                android:layout_below="@+id/txt_feed_description"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toRightOf="@id/txt_feed_source"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="@string/textTempTimezone"/>
         </RelativeLayout>
-
-    </LinearLayout>
-
+    </androidx.cardview.widget.CardView>
 </layout>
