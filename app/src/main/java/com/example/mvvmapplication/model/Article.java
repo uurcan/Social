@@ -41,7 +41,7 @@ public class Article implements Parcelable {
         dest.writeString(url);
         dest.writeString(urlToImage);
         dest.writeString(publishedAt);
-        dest.writeParcelable((Parcelable) source, flags);
+        dest.writeParcelable(source, flags);
     }
 
     @Override
