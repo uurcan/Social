@@ -19,4 +19,7 @@
     <string name="textResetPassword">Reset Password</string>
     <string name="textGoBack">Go Back</string>
     <string name="textRememberMe">Remember Me</string>
+    <string name="textAuthor">Author</string>
+    <string name="textTempTimezone">01 January 2001</string>
+    <string name="textSource">Source</string>
 </resources>

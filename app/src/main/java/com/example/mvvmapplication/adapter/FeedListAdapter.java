@@ -107,13 +107,13 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
             this.feedItemBinding = feedBinding;
         }
         void bindTo(Article article){
-            feedItemBinding.feedItemDescription.setVisibility(View.VISIBLE);
+            feedItemBinding.txtFeedDescription.setVisibility(View.VISIBLE);
             String author = article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor();
             String titleString = String.format(context.getString(R.string.item_title),author,article.getTitle());
-            feedItemBinding.feedItemTitle.setText(titleString);
-            feedItemBinding.feedItemTime.setText(String.format("%s at %s", ApplicationUtils.getDate(article.getPublishedAt()),
+            feedItemBinding.txtFeedTitle.setText(titleString);
+            feedItemBinding.txtFeedTime.setText(String.format("%s at %s", ApplicationUtils.getDate(article.getPublishedAt()),
                     ApplicationUtils.getTime(article.getPublishedAt())));
-            feedItemBinding.feedItemDescription.setText(article.getDescription());
+            feedItemBinding.txtFeedDescription.setText(article.getDescription());
             Picasso.get().load(article.getUrlToImage()).resize(250,200).into(feedItemBinding.itemDetailImage);
         }
     }
