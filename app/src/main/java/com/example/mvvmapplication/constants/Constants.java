@@ -6,4 +6,8 @@ public interface Constants {
     String LocationForTemporaryImages = "C:\\Users\\ucelebi\\AndroidStudioProjects\\MVVMApplication\\app\\src\\main\\res\\drawable\\temporary_images";
     String AUTH_PERSISTENCE = "authPersistence";
     String AUTO_SIGN = "autoSign";
+    String TITLE = "feedTitle";
+    String AUTHOR = "feedAuthor";
+    String IMAGE = "feedImage";
+    String DATE = "feedDate";
 }

@@ -1,20 +1,30 @@
 package com.example.mvvmapplication.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.mvvmapplication.R;
 import com.example.mvvmapplication.utils.ApplicationUtils;
+import com.example.mvvmapplication.utils.DateFormat;
 import com.example.mvvmapplication.utils.NetworkState;
 import com.example.mvvmapplication.databinding.FeedItemBinding;
 import com.example.mvvmapplication.databinding.NetworkItemBinding;
 import com.example.mvvmapplication.model.Article;
-import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -99,7 +109,9 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
             }
         }
     }
-
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
     private class FeedItemViewHolder extends RecyclerView.ViewHolder {
         private FeedItemBinding feedItemBinding;
         FeedItemViewHolder(FeedItemBinding feedBinding) {
@@ -108,13 +120,30 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
         }
         void bindTo(Article article){
             feedItemBinding.txtFeedDescription.setVisibility(View.VISIBLE);
-            String author = article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor();
-            String titleString = String.format(context.getString(R.string.item_title),author,article.getTitle());
-            feedItemBinding.txtFeedTitle.setText(titleString);
+            feedItemBinding.txtFeedAuthor.setText(article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor());
+            feedItemBinding.txtFeedTitle.setText(article.getTitle());
             feedItemBinding.txtFeedTime.setText(String.format("%s at %s", ApplicationUtils.getDate(article.getPublishedAt()),
                     ApplicationUtils.getTime(article.getPublishedAt())));
             feedItemBinding.txtFeedDescription.setText(article.getDescription());
-            Picasso.get().load(article.getUrlToImage()).resize(250,200).into(feedItemBinding.itemDetailImage);
+            Glide.with(context)
+                    .load(article.getUrlToImage())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            feedItemBinding.pbLoadPhoto.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            feedItemBinding.pbLoadPhoto.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(feedItemBinding.itemDetailImage);
+            feedItemBinding.txtFeedTime.setText(DateFormat.formatDate(article.getPublishedAt()));
         }
     }
 }
+
