@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
         feedViewModel = new FeedViewModel(Application.create(this));
         feedItemBinding.listFeed.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         feedListAdapter = new FeedListAdapter(getApplicationContext());
+        feedListAdapter.setOnItemClickListener(this);
         feedViewModel.getPagedListLiveData().observe(this, pagedList -> feedListAdapter.submitList(pagedList));
         feedViewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         feedItemBinding.listFeed.setAdapter(feedListAdapter);
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
 
     @Override
     public void onItemClick(View view, int position) {
+        //todo: needs work
         ImageView imageView = view.findViewById(R.id.item_detail_image);
         Intent intent = new Intent(MainActivity.this,FeedDetailsActivity.class);
         Article article = articleList.get(position);
