@@ -2,7 +2,6 @@ package com.example.mvvmapplication.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.example.mvvmapplication.R;
 import com.example.mvvmapplication.utils.ApplicationUtils;
 import com.example.mvvmapplication.utils.DateFormat;
 import com.example.mvvmapplication.utils.NetworkState;
@@ -33,6 +31,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
     private static final int TYPE_ITEM = 1;
     private Context context;
     private NetworkState networkState;
+    private OnItemClickListener onItemClickListener;
 
     public FeedListAdapter(Context context) {
         super(Article.DIFF_CALLBACK);
@@ -49,7 +48,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
             //todo : progress bar not working ?
         }else {
             FeedItemBinding feedBinding = FeedItemBinding.inflate(inflater,parent,false);
-            return new FeedItemViewHolder(feedBinding);
+            return new FeedItemViewHolder(feedBinding,onItemClickListener);
         }
     }
     private boolean hasExtraRow(){
@@ -109,22 +108,28 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
             }
         }
     }
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.onItemClickListener = onItemClickListener;
+    }
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
-    private class FeedItemViewHolder extends RecyclerView.ViewHolder {
+    private class FeedItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private FeedItemBinding feedItemBinding;
-        FeedItemViewHolder(FeedItemBinding feedBinding) {
+        private OnItemClickListener onItemClickListener;
+        FeedItemViewHolder(FeedItemBinding feedBinding,OnItemClickListener onItemClickListener) {
             super(feedBinding.getRoot());
             this.feedItemBinding = feedBinding;
+            this.onItemClickListener = onItemClickListener;
         }
         void bindTo(Article article){
             feedItemBinding.txtFeedDescription.setVisibility(View.VISIBLE);
             feedItemBinding.txtFeedAuthor.setText(article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor());
             feedItemBinding.txtFeedTitle.setText(article.getTitle());
-            feedItemBinding.txtFeedTime.setText(String.format("%s at %s", ApplicationUtils.getDate(article.getPublishedAt()),
-                    ApplicationUtils.getTime(article.getPublishedAt())));
+            feedItemBinding.txtFeedTime.setText(ApplicationUtils.getTime(article.getPublishedAt()));
+            feedItemBinding.txtPublishDate.setText(DateFormat.formatDate(article.getPublishedAt()));
             feedItemBinding.txtFeedDescription.setText(article.getDescription());
+            itemView.setOnClickListener(this);
             Glide.with(context)
                     .load(article.getUrlToImage())
                     .listener(new RequestListener<Drawable>() {
@@ -142,7 +147,11 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
                     })
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(feedItemBinding.itemDetailImage);
-            feedItemBinding.txtFeedTime.setText(DateFormat.formatDate(article.getPublishedAt()));
+        }
+
+        @Override
+        public void onClick(View v) {
+            onItemClickListener.onItemClick(v,getAdapterPosition());
         }
     }
 }
