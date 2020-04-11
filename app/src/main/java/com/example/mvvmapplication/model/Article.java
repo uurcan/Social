@@ -85,6 +85,14 @@ public class Article implements Parcelable {
         return publishedAt;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public Sources getSource() {
+        return source;
+    }
+
     public static DiffUtil.ItemCallback<Article> DIFF_CALLBACK = new DiffUtil.ItemCallback<Article>() {
         @Override
         public boolean areItemsTheSame(@NonNull Article oldItem, @NonNull Article newItem) {

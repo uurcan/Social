@@ -31,4 +31,7 @@ public class Sources implements Parcelable {
         }
     };
 
+    public String getName() {
+        return name;
+    }
 }
