@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -147,6 +148,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
                     })
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(feedItemBinding.itemDetailImage);
+            ViewCompat.setTransitionName(feedItemBinding.itemDetailImage,article.getUrlToImage());
         }
 
         @Override

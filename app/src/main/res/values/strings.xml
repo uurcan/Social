@@ -22,4 +22,9 @@
     <string name="textAuthor">Author</string>
     <string name="textTempTimezone">01 January 2001</string>
     <string name="textSource">Source</string>
+    <string name="textSubtitle">Subtitle</string>
+    <string name="textPlan">text/plan</string>
+    <string name="textShareWith">Share with :</string>
+    <string name="textShare">Share</string>
+    <string name="textOpenWithBrowser">Open with browser</string>
 </resources>

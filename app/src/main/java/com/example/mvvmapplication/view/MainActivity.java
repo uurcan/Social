@@ -8,6 +8,7 @@ import androidx.core.util.Pair;
 import androidx.core.view.ViewCompat;
 import androidx.databinding.DataBindingUtil;
 
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Context;
@@ -37,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
     FeedViewModel feedViewModel;
     FeedListAdapter feedListAdapter;
     FeedActivityBinding feedItemBinding;
-    List<Article> articleList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +67,9 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
         feedItemBinding.listFeed.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         feedListAdapter = new FeedListAdapter(getApplicationContext());
         feedListAdapter.setOnItemClickListener(this);
-        feedViewModel.getPagedListLiveData().observe(this, pagedList -> feedListAdapter.submitList(pagedList));
+        feedViewModel.getPagedListLiveData().observe(this, (PagedList<Article> pagedList) -> {
+            feedListAdapter.submitList(pagedList);
+        });
         feedViewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         feedItemBinding.listFeed.setAdapter(feedListAdapter);
     }
@@ -81,20 +83,25 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
 
     @Override
     public void onItemClick(View view, int position) {
-        //todo: needs work
-        ImageView imageView = view.findViewById(R.id.item_detail_image);
-        Intent intent = new Intent(MainActivity.this,FeedDetailsActivity.class);
-        Article article = articleList.get(position);
-        intent.putExtra(Constants.TITLE,article.getTitle());
-        intent.putExtra(Constants.IMAGE,article.getUrlToImage());
-        intent.putExtra(Constants.DATE,article.getPublishedAt());
-        intent.putExtra(Constants.AUTHOR,article.getAuthor());
-        androidx.core.util.Pair<View,String> viewStringPair = Pair.create(imageView, ViewCompat.getTransitionName(imageView));
-        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, viewStringPair);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            startActivity(intent,optionsCompat.toBundle());
-        } else {
-            startActivity(intent);
+        if (feedViewModel.getPagedListLiveData().getValue() != null) {
+            ImageView imageView = view.findViewById(R.id.item_detail_image);
+            Intent intent = new Intent(MainActivity.this, FeedDetailsActivity.class);
+            Article article = feedViewModel.getPagedListLiveData().getValue().get(position);
+            if (article != null) {
+                intent.putExtra(Constants.TITLE, article.getTitle());
+                intent.putExtra(Constants.IMAGE, article.getUrlToImage());
+                intent.putExtra(Constants.DATE, article.getPublishedAt());
+                intent.putExtra(Constants.AUTHOR, article.getAuthor());
+                intent.putExtra(Constants.URL, article.getUrl());
+                intent.putExtra(Constants.SOURCE, article.getSource().getName());
+                androidx.core.util.Pair<View, String> viewStringPair = Pair.create(imageView, ViewCompat.getTransitionName(imageView));
+                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, viewStringPair);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    startActivity(intent, optionsCompat.toBundle());
+                } else {
+                    startActivity(intent);
+                }
+            }
         }
     }
 }

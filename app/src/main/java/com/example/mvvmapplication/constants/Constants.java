@@ -10,4 +10,6 @@ public interface Constants {
     String AUTHOR = "feedAuthor";
     String IMAGE = "feedImage";
     String DATE = "feedDate";
+    String URL = "feedURL";
+    String SOURCE = "feedSource";
 }
