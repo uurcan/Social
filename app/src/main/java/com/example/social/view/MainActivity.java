@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,22 +24,40 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.social.Application;
+import com.example.social.adapter.CategoriesAdapter;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.FeedActivityBinding;
 import com.example.social.datasource.FeedViewModel;
 import com.example.social.adapter.FeedListAdapter;
 import com.example.social.R;
 import com.example.social.model.Article;
+import com.example.social.model.Category;
+import com.example.social.utils.CategoryVariables;
 import com.firebase.ui.auth.AuthUI;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FeedListAdapter.OnItemClickListener {
     FeedViewModel feedViewModel;
     FeedListAdapter feedListAdapter;
     FeedActivityBinding feedItemBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeFeed();
+        initializeToolbar();
+        initializeCategories();
+    }
+
+    private void initializeCategories() {
+        List<Category> categories = CategoryVariables.getCategories();
+        CategoriesAdapter adapter = new CategoriesAdapter(categories,getApplicationContext());
+        RecyclerView recyclerViewCategories = findViewById(R.id.categories_feed);
+        recyclerViewCategories.setAdapter(adapter);
+    }
+
+    private void initializeToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
     }
