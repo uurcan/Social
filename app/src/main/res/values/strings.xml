@@ -27,4 +27,5 @@
     <string name="textShareWith">Share with :</string>
     <string name="textShare">Share</string>
     <string name="textOpenWithBrowser">Open with browser</string>
+    <string name="textImage">image</string>
 </resources>

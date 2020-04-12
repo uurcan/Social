@@ -31,9 +31,6 @@ import com.example.mvvmapplication.R;
 import com.example.mvvmapplication.model.Article;
 import com.firebase.ui.auth.AuthUI;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity implements FeedListAdapter.OnItemClickListener {
     FeedViewModel feedViewModel;
     FeedListAdapter feedListAdapter;
@@ -94,9 +91,12 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
                 intent.putExtra(Constants.AUTHOR, article.getAuthor());
                 intent.putExtra(Constants.URL, article.getUrl());
                 intent.putExtra(Constants.SOURCE, article.getSource().getName());
-                androidx.core.util.Pair<View, String> viewStringPair = Pair.create(imageView, ViewCompat.getTransitionName(imageView));
-                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, viewStringPair);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        imageView.setTransitionName(getString(R.string.textImage));
+                    }
+                    Pair<View, String> viewStringPair = Pair.create(imageView, ViewCompat.getTransitionName(imageView));
+                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, viewStringPair);
                     startActivity(intent, optionsCompat.toBundle());
                 } else {
                     startActivity(intent);

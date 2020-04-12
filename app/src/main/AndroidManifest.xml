@@ -15,7 +15,6 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-
         <activity android:name=".view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,8 +24,7 @@
         <activity android:name=".view.MainActivity" />
         <activity android:name=".view.SignUpActivity" />
         <activity android:name=".view.ForgotPasswordActivity" />
-        <activity android:name=".view.FeedDetailsActivity" />
-
+        <activity android:name=".view.FeedDetailsActivity" android:theme="@style/AppTheme.NoActionBar"/>
 
     </application>
 
