@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.Intent;
@@ -37,11 +38,14 @@ import com.firebase.ui.auth.AuthUI;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements FeedListAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements FeedListAdapter.OnItemClickListener,
+        SwipeRefreshLayout.OnRefreshListener,
+        CategoriesAdapter.OnItemClickListener{
+    private List<Category> categories;
     FeedViewModel feedViewModel;
     FeedListAdapter feedListAdapter;
     FeedActivityBinding feedItemBinding;
-
+    CategoriesAdapter categoriesAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +55,13 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
     }
 
     private void initializeCategories() {
-        List<Category> categories = CategoryVariables.getCategories();
-        CategoriesAdapter adapter = new CategoriesAdapter(categories,getApplicationContext());
+        categories = CategoryVariables.getCategories();
+        categoriesAdapter = new CategoriesAdapter(categories,getApplicationContext());
+        categoriesAdapter.setOnItemClickListener(this);
         RecyclerView recyclerViewCategories = findViewById(R.id.categories_feed);
-        recyclerViewCategories.setAdapter(adapter);
+        recyclerViewCategories.setAdapter(categoriesAdapter);
+        feedItemBinding.swipeRefreshFeed.setOnRefreshListener(this);
+        feedItemBinding.swipeRefreshFeed.setColorSchemeResources(R.color.navy);
     }
 
     private void initializeToolbar() {
@@ -84,7 +91,9 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
         feedListAdapter = new FeedListAdapter(getApplicationContext());
         feedListAdapter.setOnItemClickListener(this);
         feedViewModel.getPagedListLiveData().observe(this, (PagedList<Article> pagedList) -> {
+            feedItemBinding.swipeRefreshFeed.setRefreshing(true);
             feedListAdapter.submitList(pagedList);
+            feedItemBinding.swipeRefreshFeed.setRefreshing(false);
         });
         feedViewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         feedItemBinding.listFeed.setAdapter(feedListAdapter);
@@ -122,5 +131,23 @@ public class MainActivity extends AppCompatActivity implements FeedListAdapter.O
                 }
             }
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        feedItemBinding.swipeRefreshFeed.post(() -> feedViewModel.getPagedListLiveData().observe(MainActivity.this, (PagedList<Article> pagedList) -> {
+            feedItemBinding.swipeRefreshFeed.setRefreshing(true);
+            feedListAdapter.submitList(pagedList);
+            feedListAdapter.notifyDataSetChanged();
+            feedItemBinding.swipeRefreshFeed.setRefreshing(false);
+        }));
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+        //todo: categories implementation is required
+        String category = categories.get(position).getName();
+        Toast.makeText(getApplicationContext(),category,Toast.LENGTH_LONG).show();
+        Application.getRestApi().fetchFeed(category,Constants.API_KEY,1,10);
     }
 }

@@ -8,7 +8,7 @@ import com.example.social.network.RestApiFactory;
 import io.reactivex.Scheduler;
 
 public class Application extends android.app.Application {
-    private RestApi restApi;
+    private static RestApi restApi;
     private Scheduler scheduler;
     /** private static Application getInstance(Context context){
         return (Application) context.getApplicationContext();
@@ -25,7 +25,7 @@ public class Application extends android.app.Application {
     public static Application create(Context context) {
         return Application.get(context);
     }
-    public RestApi getRestApi() {
+    public static RestApi getRestApi() {
         if (restApi == null){
             restApi = RestApiFactory.create();
         }
