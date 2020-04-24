@@ -2,14 +2,15 @@ package com.example.social.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
-import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,25 +19,26 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.example.social.utils.ApplicationUtils;
-import com.example.social.utils.DateFormat;
-import com.example.social.utils.NetworkState;
 import com.example.social.databinding.FeedItemBinding;
 import com.example.social.databinding.NetworkItemBinding;
 import com.example.social.model.Article;
+import com.example.social.utils.DateFormat;
+import com.example.social.utils.NetworkState;
 
+import java.util.List;
 import java.util.Objects;
 
-public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.ViewHolder> {
+public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_PROGRESS = 0;
     private static final int TYPE_ITEM = 1;
     private Context context;
     private NetworkState networkState;
     private OnItemClickListener onItemClickListener;
+    private List<Article> articles;
 
-    public FeedListAdapter(Context context) {
-        super(Article.DIFF_CALLBACK);
+    public FeedListAdapter(List<Article> articles, Context context) {
         this.context = context;
+        this.articles = articles;
     }
 
     @NonNull
@@ -58,7 +60,9 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof FeedItemViewHolder){
-            ((FeedItemViewHolder)holder).bindTo(Objects.requireNonNull(getItem(position)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                ((FeedItemViewHolder)holder).bindTo(Objects.requireNonNull(articles.get(position)));
+            }
         }else {
             ((NetworkStateItemViewHolder)holder).bindView(networkState);
         }
@@ -71,6 +75,11 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
         }else {
             return TYPE_ITEM;
         }
+    }
+
+    @Override
+    public int getItemCount() {
+        return articles == null ? 0 : articles.size();
     }
 
     public void setNetworkState(NetworkState newNetworkState) {
@@ -86,6 +95,13 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
             }
         }else if(newExtraRow && previousState != newNetworkState){
             notifyItemChanged(getItemCount() - 1);
+        }
+    }
+
+    public void setArticles(List<Article> articles) {
+        if (articles != null) {
+            this.articles = articles;
+            notifyDataSetChanged();
         }
     }
 
@@ -113,7 +129,8 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
         this.onItemClickListener = onItemClickListener;
     }
     public interface OnItemClickListener {
-        void onItemClick(View view, int position);
+        void onItemClick(Article article);
+        void onCategoryClick(Article article);
     }
     private class FeedItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private FeedItemBinding feedItemBinding;
@@ -127,7 +144,7 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
             feedItemBinding.txtFeedDescription.setVisibility(View.VISIBLE);
             feedItemBinding.txtFeedAuthor.setText(article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor());
             feedItemBinding.txtFeedTitle.setText(article.getTitle());
-            feedItemBinding.txtFeedTime.setText(ApplicationUtils.getTime(article.getPublishedAt()));
+            feedItemBinding.txtFeedTime.setText(DateFormat.formatDate(article.getPublishedAt()));
             feedItemBinding.txtPublishDate.setText(DateFormat.formatDate(article.getPublishedAt()));
             feedItemBinding.txtFeedDescription.setText(article.getDescription());
             itemView.setOnClickListener(this);
@@ -153,7 +170,12 @@ public class FeedListAdapter extends PagedListAdapter<Article, RecyclerView.View
 
         @Override
         public void onClick(View v) {
-            onItemClickListener.onItemClick(v,getAdapterPosition());
+            int index = this.getAdapterPosition();
+            if (v instanceof ImageView) {
+                onItemClickListener.onCategoryClick(articles.get(index));
+            } else {
+                onItemClickListener.onItemClick(articles.get(index));
+            }
         }
     }
 }

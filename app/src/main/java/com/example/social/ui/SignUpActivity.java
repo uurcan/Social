@@ -1,4 +1,4 @@
-package com.example.social.view;
+package com.example.social.ui;
 
 import android.os.Bundle;
 

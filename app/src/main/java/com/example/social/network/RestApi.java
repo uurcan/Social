@@ -15,6 +15,7 @@ public interface RestApi {
 
     @GET("/v2/top-headlines")
     Call<Feed> fetchFeedByLanguage(@Query("country") String country,
+                                   @Query("category") String category,
                                    @Query("apiKey") String apiKey,
                                    @Query("page") long page,
                                    @Query("pageSize") int pageSize);

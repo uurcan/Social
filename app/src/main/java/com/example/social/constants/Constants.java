@@ -11,4 +11,6 @@ public interface Constants {
     String DATE = "feedDate";
     String URL = "feedURL";
     String SOURCE = "feedSource";
+    String ARTICLE_PARAMS = "article_details";
+    String DESCRIPTION = "description" ;
 }
