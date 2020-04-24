@@ -1,6 +1,6 @@
 package com.example.social.model;
 
-public class Category {
+public class Category  {
     private int id;
     private String name;
 
@@ -24,4 +24,5 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
+
 }

@@ -1,24 +1,17 @@
 package com.example.social.datasource;
 
+import android.app.Application;
+
 import androidx.lifecycle.MutableLiveData;
-import androidx.paging.DataSource;
 
-import com.example.social.Application;
 
-public class FeedDataFactory extends DataSource.Factory {
+public class FeedDataFactory {
     private MutableLiveData<FeedDataSource> mutableLiveData;
     private Application application;
 
     FeedDataFactory(Application application) {
         this.application = application;
         mutableLiveData = new MutableLiveData<>();
-    }
-
-    @Override
-    public DataSource create() {
-        FeedDataSource feedDataSource = new FeedDataSource(application);
-        mutableLiveData.postValue(feedDataSource);
-        return feedDataSource;
     }
 
     MutableLiveData<FeedDataSource> getMutableLiveData() {

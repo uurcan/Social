@@ -1,4 +1,4 @@
-package com.example.social.view;
+package com.example.social.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -33,11 +33,12 @@ import java.util.Objects;
 
 public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
     private FrameLayout layoutFeedDate;
-    private TextView titleFeedDetailToolbar,subtitleFeedDetailToolbar,dateFeedDetail,timeFeedDetail,titleFeedDetail;
+    private TextView titleFeedDetailToolbar,subtitleFeedDetailToolbar,dateFeedDetail,timeFeedDetail,titleFeedDetail,descriptionFeedDetail;
     private String feedURL,feedSource,feedTitle;
     private ImageView imageView;
     private boolean isToolbarHidden;
     private LinearLayout layoutFeedDetail;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,30 +58,33 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         dateFeedDetail = findViewById(R.id.feed_detail_datetime);
         timeFeedDetail = findViewById(R.id.feed_details_timezone);
         titleFeedDetail = findViewById(R.id.feed_detail_title);
+        descriptionFeedDetail = findViewById(R.id.feed_detail_description);
         layoutFeedDate = findViewById(R.id.feed_details_date);
         imageView = findViewById(R.id.back_drop_feed_Detail);
     }
-    private void initializeFeedDetails(){
-        Intent intent = getIntent();
-        String feedImage = intent.getStringExtra(Constants.IMAGE);
-        String feedTimezone = intent.getStringExtra(Constants.DATE);
-        String feedAuthor = intent.getStringExtra(Constants.AUTHOR);
-        feedTitle = intent.getStringExtra(Constants.TITLE);
-        feedURL = intent.getStringExtra(Constants.URL);
-        feedSource = intent.getStringExtra(Constants.SOURCE);
 
-        Glide.with(this)
-                .load(feedImage)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imageView);
-        StringBuilder feedInfo = new StringBuilder(feedSource != null ? feedSource : "Anonymous")
-                .append(feedAuthor == null || feedAuthor.isEmpty() ? "Anonymous" : feedAuthor)
-                .append(ApplicationUtils.getDate(feedTimezone));
-        titleFeedDetailToolbar.setText(feedSource);
-        subtitleFeedDetailToolbar.setText(feedURL);
-        dateFeedDetail.setText(DateFormat.formatDate(feedTimezone));
-        titleFeedDetail.setText(feedTitle);
-        timeFeedDetail.setText(feedInfo);
+    private void initializeFeedDetails(){
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null ){
+            feedURL = bundle.getString(Constants.URL);
+            feedTitle = bundle.getString(Constants.TITLE);
+            String feedAuthor = bundle.getString(Constants.AUTHOR);
+            StringBuilder feedInfo = new StringBuilder().append(bundle.getString(Constants.SOURCE) == null ||
+                            feedAuthor == null ? "Anonymous" : bundle.getString(Constants.SOURCE))
+                    .append(" - ").append(ApplicationUtils.getDate(bundle.getString(Constants.DATE)));
+
+            titleFeedDetailToolbar.setText(bundle.getString(Constants.TITLE));
+            subtitleFeedDetailToolbar.setText(feedURL);
+            dateFeedDetail.setText(DateFormat.formatDate(bundle.getString(Constants.DATE)));
+            titleFeedDetail.setText(bundle.getString(Constants.TITLE));
+            timeFeedDetail.setText(feedInfo);
+            descriptionFeedDetail.setText(bundle.getString(Constants.DESCRIPTION));
+            Glide.with(this)
+                    .load(bundle.getString(Constants.IMAGE))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(imageView);
+
+        }
     }
     @SuppressLint("SetJavaScriptEnabled")
     private void initializeWebView(String feedURL) {

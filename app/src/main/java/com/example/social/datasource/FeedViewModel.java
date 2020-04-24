@@ -1,50 +1,39 @@
 package com.example.social.datasource;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
-import androidx.paging.LivePagedListBuilder;
-import androidx.paging.PagedList;
+import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 
 import com.example.social.model.Article;
+import com.example.social.network.ArticleRepository;
 import com.example.social.utils.NetworkState;
-import com.example.social.Application;
+import com.example.social.utils.Specification;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.List;
 
-public class FeedViewModel extends ViewModel {
-    private Application application;
-    private LiveData<PagedList<Article>> articleLiveData;
+public class FeedViewModel extends AndroidViewModel {
     private LiveData<NetworkState> networkState;
+    private final ArticleRepository articleRepository;
 
     public FeedViewModel(@NonNull Application application) {
-        this.application = application;
-        initializeViewModel();
+        super(application);
+        articleRepository = ArticleRepository.getInstance(application.getApplicationContext());
+        initializeViewModel(application);
     }
 
-    private void initializeViewModel() {
+    private void initializeViewModel(Application application) {
         FeedDataFactory feedDataFactory = new FeedDataFactory(application);
-        Executor executor = Executors.newFixedThreadPool(5);
-        networkState = Transformations.switchMap(feedDataFactory.getMutableLiveData(),
-                FeedDataSource::getNetWorkState);
-        PagedList.Config config = (new PagedList.Config.Builder())
-                .setEnablePlaceholders(true)
-                .setInitialLoadSizeHint(10)
-                .setPageSize(20)
-                .setPrefetchDistance(4)
-                .build();
-        articleLiveData = (new LivePagedListBuilder(feedDataFactory,config))
-                .setFetchExecutor(executor)
-                .build();
+        /*networkState = Transformations.switchMap(feedDataFactory.getMutableLiveData(),
+                FeedDataSource::getNetWorkState);*/
     }
+
     public LiveData<NetworkState> getNetworkState() {
         return networkState;
     }
 
-    public LiveData<PagedList<Article>> getPagedListLiveData() {
-        return articleLiveData;
+    public LiveData<List<Article>> getPagedListLiveData(Specification specification) {
+        return articleRepository.getArticles(specification);
     }
 }

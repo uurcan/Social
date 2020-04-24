@@ -1,4 +1,4 @@
-package com.example.social.view;
+package com.example.social.ui;
 
 import android.animation.Animator;
 import android.content.Context;
@@ -41,7 +41,7 @@ import java.util.Objects;
 
 import static android.view.View.GONE;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener,FirebaseAuth.AuthStateListener,Constants{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, FirebaseAuth.AuthStateListener{
     private ImageView imageViewLogo;
     private TextView textViewLogin;
     private ProgressBar loadingProgressBar;
@@ -187,12 +187,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initializeSharedPreferencesForFirebaseAuthenticationFunctionality() {
-        SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences(AUTH_PERSISTENCE, Context.MODE_PRIVATE)
+        SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences(Constants.AUTH_PERSISTENCE, Context.MODE_PRIVATE)
                 .edit();
         if (chkRememberMe.isChecked()) {
-            editor.putBoolean(AUTO_SIGN, true);
+            editor.putBoolean(Constants.AUTO_SIGN, true);
         } else {
-            editor.putBoolean(AUTO_SIGN,false);
+            editor.putBoolean(Constants.AUTO_SIGN,false);
         } editor.apply();
     }
 
@@ -204,7 +204,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        if (getApplicationContext().getSharedPreferences(AUTH_PERSISTENCE,Context.MODE_PRIVATE).getBoolean(AUTO_SIGN,false)){
+        if (getApplicationContext().getSharedPreferences(Constants.AUTH_PERSISTENCE,Context.MODE_PRIVATE).getBoolean(Constants.AUTO_SIGN,false)){
             if (firebaseAuth.getCurrentUser() != null) {
                 startActivity(new Intent(this, MainActivity.class));
             }

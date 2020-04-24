@@ -28,4 +28,6 @@
     <string name="textShare">Share</string>
     <string name="textOpenWithBrowser">Open with browser</string>
     <string name="textImage">image</string>
+    <string name="message_fragment">Message Fragment</string>
+    <string name="profile_fragment">Profile Fragment</string>
 </resources>

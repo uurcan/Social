@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:background="@color/white"
-    tools:context=".view.FeedDetailsActivity"
+    tools:context=".ui.FeedDetailsActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.google.android.material.appbar.AppBarLayout
         android:theme="@style/AppBarLayoutTheme"
@@ -130,12 +130,20 @@
                         android:textColor="#262626"
                         android:textSize="19sp"
                         android:textStyle="bold" />
-
+                    <TextView
+                        android:layout_below="@+id/feed_detail_title"
+                        android:id="@+id/feed_detail_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/lorem_ipsum"
+                        android:textColor="#262626"
+                        android:textSize="16sp" />
                     <TextView
                         android:id="@+id/feed_details_timezone"
                         android:layout_width="wrap_content"
                         android:layout_height="20dp"
-                        android:layout_below="@id/feed_detail_title"
+                        android:layout_below="@id/feed_detail_description"
                         android:layout_marginTop="10dp"
                         android:drawablePadding="10dp"
                         android:ellipsize="end"

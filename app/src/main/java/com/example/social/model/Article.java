@@ -3,66 +3,69 @@ package com.example.social.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
+import com.google.gson.annotations.Expose;
 
-import com.example.social.utils.ApplicationUtils;
+import java.sql.Timestamp;
 
+/**
+ * A News Article content and it's details
+ */
 public class Article implements Parcelable {
-    private static int increment = 0;
-    private long id;
-    private String author;
-    private String title;
-    private String description;
-    private String url;
-    private String urlToImage;
-    private String publishedAt;
-    private Sources source;
+    @Expose(serialize = false, deserialize = false)
+    public int id;
+    private final String author;
+    private final String title;
+    private final String description;
+    private final String url;
+    private final String publishedAt;
+    private final String urlToImage;
+    private final Sources source;
+    private final String content;
+    @Expose(serialize = false, deserialize = false)
+    private String category;
+    @Expose(serialize = false, deserialize = false)
+    private Timestamp saveDate = new Timestamp(System.currentTimeMillis());
 
-
-    private Article(Parcel in) {
-        id = ApplicationUtils.getRandomNumber();
-        author = in.readString();
-        title = in.readString();
-        description = in.readString();
-        url = in.readString();
-        urlToImage = in.readString();
-        publishedAt = in.readString();
-        source = in.readParcelable(Sources.class.getClassLoader());
-        id= ++increment;
+    /**
+     * @param author      author of the article
+     * @param title       headline or title of the article.
+     * @param description description or snippet from the article.
+     * @param url         The direct URL to the article
+     * @param publishedAt The date and time that the article was published, in UTC (+000)
+     * @param urlToImage  The URL to a relevant image for the article.
+     * @param source      The identifier id and a display name name for the source this article came from.
+     * @param content     The unformatted content of the article, where available. This is truncated to
+     *                    260 chars for Developer plan users.
+     */
+    public Article(String author, String title, String description, String url, String publishedAt, String urlToImage, Sources source, String content) {
+        this.author = author;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.publishedAt = publishedAt;
+        this.urlToImage = urlToImage;
+        this.source = source;
+        this.content = content;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(author);
-        dest.writeString(title);
-        dest.writeString(description);
-        dest.writeString(url);
-        dest.writeString(urlToImage);
-        dest.writeString(publishedAt);
-        dest.writeParcelable(source, flags);
+    public String getCategory() {
+        return category;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public static final Creator<Article> CREATOR = new Creator<Article>() {
-        @Override
-        public Article createFromParcel(Parcel in) {
-            return new Article(in);
-        }
-
-        @Override
-        public Article[] newArray(int size) {
-            return new Article[size];
-        }
-    };
-
-    public long getId() {
+    public int getId() {
         return id;
+    }
+
+    public Timestamp getSaveDate() {
+        return saveDate;
+    }
+
+    public void setSaveDate(Timestamp saveDate) {
+        this.saveDate = saveDate;
     }
 
     public String getAuthor() {
@@ -77,40 +80,86 @@ public class Article implements Parcelable {
         return description;
     }
 
-    public String getUrlToImage() {
-        return urlToImage;
+    public String getUrl() {
+        return url;
     }
 
     public String getPublishedAt() {
         return publishedAt;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUrlToImage() {
+        return urlToImage;
     }
 
     public Sources getSource() {
         return source;
     }
 
-    public static DiffUtil.ItemCallback<Article> DIFF_CALLBACK = new DiffUtil.ItemCallback<Article>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Article oldItem, @NonNull Article newItem) {
-            return oldItem.id == newItem.id;
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Article oldItem, @NonNull Article newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
+    public String getContent() {
+        return content;
+    }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-
-        Article article = (Article) obj;
-        return article.id == this.id;
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", url='" + url + '\'' +
+                ", publishedAt=" + publishedAt +
+                ", urlToImage='" + urlToImage + '\'' +
+                ", source=" + source +
+                ", content='" + content + '\'' +
+                ", category='" + category + '\'' +
+                ", saveDate=" + saveDate +
+                '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.author);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.url);
+        dest.writeSerializable(this.publishedAt);
+        dest.writeString(this.urlToImage);
+        dest.writeParcelable(this.source, flags);
+        dest.writeString(this.content);
+        dest.writeString(this.category);
+        dest.writeSerializable(this.saveDate);
+    }
+
+    protected Article(Parcel in) {
+        this.id = in.readInt();
+        this.author = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.url = in.readString();
+        this.publishedAt = in.readString();
+        this.urlToImage = in.readString();
+        this.source = in.readParcelable(Sources.class.getClassLoader());
+        this.content = in.readString();
+        this.category = in.readString();
+        this.saveDate = (Timestamp) in.readSerializable();
+    }
+
+    public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
+        @Override
+        public Article createFromParcel(Parcel source) {
+            return new Article(source);
+        }
+
+        @Override
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
 }
