@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import com.example.social.model.Article;
 import com.example.social.network.ArticleRepository;
 import com.example.social.utils.NetworkState;
-import com.example.social.utils.Specification;
+import com.example.social.model.Specification;
 
 import java.util.List;
 

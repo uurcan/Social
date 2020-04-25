@@ -1,17 +1,19 @@
 package com.example.social.model;
 
-public enum CategoryVariables {
-    business("BUSINESS"),
-    entertainment("ENTERTAINMENT"),
-    general("GENERAL"),
-    health("HEALTH"),
-    science("SCIENCE"),
-    sports("SPORTS"),
-    technology("TECHNOLOGY");
+import java.util.ArrayList;
+import java.util.List;
 
-    public final String title;
-
-    CategoryVariables(String title) {
-        this.title = title;
+public class CategoryVariables {
+    private final List<Category> categoryList = new ArrayList<>();
+    public final List<Category> getCategories(){
+        categoryList.add(new Category(1,"BUSINESS"));
+        categoryList.add(new Category(2,"ENTERTAINMENT"));
+        categoryList.add(new Category(3,"GENERAL"));
+        categoryList.add(new Category(4,"HEALTH"));
+        categoryList.add(new Category(5,"SCIENCE"));
+        categoryList.add(new Category(6,"SPORTS"));
+        categoryList.add(new Category(7,"MOVIES"));
+        categoryList.add(new Category(8,"TECHNOLOGY"));
+        return categoryList;
     }
 }
