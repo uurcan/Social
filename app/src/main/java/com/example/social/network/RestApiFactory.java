@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.social.constants.Constants;
 import com.example.social.model.Article;
 import com.example.social.model.Feed;
-import com.example.social.utils.Specification;
+import com.example.social.model.Specification;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -82,7 +82,7 @@ public class RestApiFactory {
         final MutableLiveData<List<Article>> networkLiveData = new MutableLiveData<>();
 
         Call<Feed> networkCall = restApi.fetchFeedByLanguage
-                (specification.getCountry(),specification.getCategory(), Constants.API_KEY,1,10);
+                (specification.getCountry(),specification.getCategory(), Constants.API_KEY, specification.getCurrentPage(),10);
 
         networkCall.enqueue(new Callback<Feed>() {
             @Override

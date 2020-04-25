@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,19 +17,30 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.social.R;
+import com.example.social.adapter.CategoriesAdapter;
+import com.example.social.model.Category;
+import com.example.social.model.CategoryVariables;
 import com.example.social.ui.FeedDetailsActivity;
 import com.example.social.adapter.FeedListAdapter;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.FragmentFeedBinding;
 import com.example.social.datasource.FeedViewModel;
 import com.example.social.model.Article;
-import com.example.social.utils.Specification;
+import com.example.social.model.Specification;
 
-public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClickListener{
+import java.util.List;
+
+public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClickListener,
+           CategoriesAdapter.OnItemClickListener,SwipeRefreshLayout.OnRefreshListener{
     private FeedListAdapter feedListAdapter;
     private FragmentFeedBinding fragmentFeedBinding;
+    private List<Category> categories;
+    private FeedViewModel viewModel;
+    private Specification specification;
+
     public FeedFragment() {
         // Required empty public constructor
     }
@@ -54,6 +66,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClic
     }
 
     private void initializeCategories() {
+        CategoryVariables variables = new CategoryVariables();
+        categories = variables.getCategories();
+        CategoriesAdapter adapter = new CategoriesAdapter(categories,getContext());
+        adapter.setOnItemClickListener(this);
+        fragmentFeedBinding.categoriesFeed.setAdapter(adapter);
     }
 
     private void initializeToolbar() {
@@ -64,15 +81,12 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClic
     }
 
     private void initializeFeed() {
-        Specification specification = new Specification();
-        FeedViewModel viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+        fragmentFeedBinding.swipeRefreshFeed.setOnRefreshListener(this);
+        specification = new Specification();
+        viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
         fragmentFeedBinding.listFeed.setLayoutManager(new LinearLayoutManager(getContext()));
         feedListAdapter = new FeedListAdapter(null,getContext());
-        viewModel.getPagedListLiveData(specification).observe(this, articles -> {
-            if (articles != null){
-                feedListAdapter.setArticles(articles);
-            }
-        });
+        initializeLiveData();
         feedListAdapter.setOnItemClickListener(this);
         //viewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         fragmentFeedBinding.listFeed.setAdapter(feedListAdapter);
@@ -101,7 +115,24 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClic
     }
 
     @Override
-    public void onCategoryClick(Article article) {
+    public void onRefresh() {
+        initializeLiveData();
+    }
 
+    @Override
+    public void onClick(View view, int position) {
+        Toast.makeText(getContext(),categories.get(position).getName(),Toast.LENGTH_SHORT).show();
+        specification.setCategory(categories.get(position).getName());
+        fragmentFeedBinding.listFeed.smoothScrollToPosition(0);
+        initializeLiveData();
+    }
+    private void initializeLiveData(){
+        fragmentFeedBinding.swipeRefreshFeed.setRefreshing(true);
+        viewModel.getPagedListLiveData(specification).observe(this, articles -> {
+            if (articles != null){
+                feedListAdapter.setArticles(articles);
+            }
+        });
+        fragmentFeedBinding.swipeRefreshFeed.setRefreshing(false);
     }
 }

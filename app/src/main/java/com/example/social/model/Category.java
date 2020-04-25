@@ -1,20 +1,20 @@
 package com.example.social.model;
 
 public class Category  {
-    private int id;
+    private int icon;
     private String name;
 
-    public Category(int id, String name) {
-        this.id = id;
+    public Category(int icon, String name) {
+        this.icon = icon;
         this.name = name;
     }
 
     public int getId() {
-        return id;
+        return icon;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int icon) {
+        this.icon = icon;
     }
 
     public String getName() {

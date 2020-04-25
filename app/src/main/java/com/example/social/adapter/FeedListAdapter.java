@@ -19,6 +19,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.social.R;
 import com.example.social.databinding.FeedItemBinding;
 import com.example.social.databinding.NetworkItemBinding;
 import com.example.social.model.Article;
@@ -130,8 +131,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
     public interface OnItemClickListener {
         void onItemClick(Article article);
-        void onCategoryClick(Article article);
     }
+
     private class FeedItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private FeedItemBinding feedItemBinding;
         private OnItemClickListener onItemClickListener;
@@ -164,6 +165,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         }
                     })
             .transition(DrawableTransitionOptions.withCrossFade())
+            .placeholder(R.drawable.temp_background)
             .into(feedItemBinding.itemDetailImage);
             ViewCompat.setTransitionName(feedItemBinding.itemDetailImage,article.getUrlToImage());
         }
@@ -171,11 +173,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @Override
         public void onClick(View v) {
             int index = this.getAdapterPosition();
-            if (v instanceof ImageView) {
-                onItemClickListener.onCategoryClick(articles.get(index));
-            } else {
-                onItemClickListener.onItemClick(articles.get(index));
-            }
+            onItemClickListener.onItemClick(articles.get(index));
         }
     }
 }
