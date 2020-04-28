@@ -82,7 +82,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
             Glide.with(this)
                     .load(bundle.getString(Constants.IMAGE))
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .placeholder(R.drawable.temp_background)
+                    .placeholder(R.drawable.placeholder640)
                     .into(imageView);
 
         }

@@ -6,7 +6,6 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +21,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.social.R;
 import com.example.social.databinding.FeedItemBinding;
 import com.example.social.databinding.NetworkItemBinding;
+import com.example.social.listener.OnFeedClickListener;
 import com.example.social.model.Article;
 import com.example.social.utils.DateFormat;
 import com.example.social.utils.NetworkState;
@@ -34,7 +34,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int TYPE_ITEM = 1;
     private Context context;
     private NetworkState networkState;
-    private OnItemClickListener onItemClickListener;
+    private OnFeedClickListener onFeedClickListener;
     private List<Article> articles;
 
     public FeedListAdapter(List<Article> articles, Context context) {
@@ -52,7 +52,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             //todo : progress bar not working ?
         }else {
             FeedItemBinding feedBinding = FeedItemBinding.inflate(inflater,parent,false);
-            return new FeedItemViewHolder(feedBinding,onItemClickListener);
+            return new FeedItemViewHolder(feedBinding, onFeedClickListener);
         }
     }
     private boolean hasExtraRow(){
@@ -126,20 +126,17 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         }
     }
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
-        this.onItemClickListener = onItemClickListener;
-    }
-    public interface OnItemClickListener {
-        void onItemClick(Article article);
+    public void setOnFeedClickListener(OnFeedClickListener onFeedClickListener){
+        this.onFeedClickListener = onFeedClickListener;
     }
 
     private class FeedItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private FeedItemBinding feedItemBinding;
-        private OnItemClickListener onItemClickListener;
-        FeedItemViewHolder(FeedItemBinding feedBinding,OnItemClickListener onItemClickListener) {
+        private OnFeedClickListener onFeedClickListener;
+        FeedItemViewHolder(FeedItemBinding feedBinding, OnFeedClickListener onFeedClickListener) {
             super(feedBinding.getRoot());
             this.feedItemBinding = feedBinding;
-            this.onItemClickListener = onItemClickListener;
+            this.onFeedClickListener = onFeedClickListener;
         }
         void bindTo(Article article){
             feedItemBinding.txtFeedDescription.setVisibility(View.VISIBLE);
@@ -165,7 +162,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         }
                     })
             .transition(DrawableTransitionOptions.withCrossFade())
-            .placeholder(R.drawable.temp_background)
+            .placeholder(R.drawable.placeholder640)
             .into(feedItemBinding.itemDetailImage);
             ViewCompat.setTransitionName(feedItemBinding.itemDetailImage,article.getUrlToImage());
         }
@@ -173,7 +170,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @Override
         public void onClick(View v) {
             int index = this.getAdapterPosition();
-            onItemClickListener.onItemClick(articles.get(index));
+            onFeedClickListener.onFeedClick(articles.get(index));
         }
     }
 }

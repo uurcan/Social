@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,10 +18,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.social.R;
 import com.example.social.adapter.CategoriesAdapter;
+import com.example.social.listener.OnFeedClickListener;
 import com.example.social.model.Category;
 import com.example.social.model.CategoryVariables;
 import com.example.social.ui.FeedDetailsActivity;
@@ -33,8 +36,8 @@ import com.example.social.model.Specification;
 
 import java.util.List;
 
-public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClickListener,
-           CategoriesAdapter.OnItemClickListener,SwipeRefreshLayout.OnRefreshListener{
+public class FeedFragment extends Fragment implements OnFeedClickListener,
+                                                      SwipeRefreshLayout.OnRefreshListener{
     private FeedListAdapter feedListAdapter;
     private FragmentFeedBinding fragmentFeedBinding;
     private List<Category> categories;
@@ -58,11 +61,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClic
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initializeCategories();
         initializeFeed();
         initializeToolbar();
-        initializeCategories();
     }
 
     private void initializeCategories() {
@@ -75,25 +78,57 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClic
 
     private void initializeToolbar() {
         if (getView() != null) {
-            Toolbar toolbar = getView().findViewById(R.id.toolbar_main);
-            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            if (getActivity() != null) {
+                if (getActivity().getActionBar() != null) {
+                    Toolbar toolbar = getView().findViewById(R.id.toolbar_main);
+                    ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+                }
+            }
         }
     }
 
     private void initializeFeed() {
         fragmentFeedBinding.swipeRefreshFeed.setOnRefreshListener(this);
+        fragmentFeedBinding.listFeed.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1)){
+                    reduceRecyclerViewHeightForViewPagingDirector();
+                }
+            }
+        });
         specification = new Specification();
         viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
         fragmentFeedBinding.listFeed.setLayoutManager(new LinearLayoutManager(getContext()));
         feedListAdapter = new FeedListAdapter(null,getContext());
         initializeLiveData();
-        feedListAdapter.setOnItemClickListener(this);
+        feedListAdapter.setOnFeedClickListener(this);
         //viewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         fragmentFeedBinding.listFeed.setAdapter(feedListAdapter);
     }
 
+    private void reduceRecyclerViewHeightForViewPagingDirector() {
+        fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,11.0f));
+    }
+
     @Override
-    public void onItemClick(Article article) {
+    public void onRefresh() {
+        initializeLiveData();
+    }
+
+    private void initializeLiveData(){
+        fragmentFeedBinding.swipeRefreshFeed.setRefreshing(true);
+        viewModel.getPagedListLiveData(specification).observe(this, articles -> {
+            if (articles != null){
+                feedListAdapter.setArticles(articles);
+            }
+        });
+        fragmentFeedBinding.swipeRefreshFeed.setRefreshing(false);
+    }
+
+    @Override
+    public void onFeedClick(Article article) {
         if (getActivity() != null && getView() != null) {
             Intent intent = new Intent(getContext(), FeedDetailsActivity.class);
             intent.putExtra(Constants.TITLE, article.getTitle());
@@ -115,24 +150,11 @@ public class FeedFragment extends Fragment implements FeedListAdapter.OnItemClic
     }
 
     @Override
-    public void onRefresh() {
-        initializeLiveData();
-    }
-
-    @Override
-    public void onClick(View view, int position) {
+    public void onCategoryClick(View view, int position) {
         Toast.makeText(getContext(),categories.get(position).getName(),Toast.LENGTH_SHORT).show();
         specification.setCategory(categories.get(position).getName());
         fragmentFeedBinding.listFeed.smoothScrollToPosition(0);
         initializeLiveData();
     }
-    private void initializeLiveData(){
-        fragmentFeedBinding.swipeRefreshFeed.setRefreshing(true);
-        viewModel.getPagedListLiveData(specification).observe(this, articles -> {
-            if (articles != null){
-                feedListAdapter.setArticles(articles);
-            }
-        });
-        fragmentFeedBinding.swipeRefreshFeed.setRefreshing(false);
-    }
+
 }
