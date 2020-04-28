@@ -12,8 +12,7 @@ public class CategoryVariables {
         categoryList.add(new Category(4,"HEALTH"));
         categoryList.add(new Category(5,"SCIENCE"));
         categoryList.add(new Category(6,"SPORTS"));
-        categoryList.add(new Category(7,"MOVIES"));
-        categoryList.add(new Category(8,"TECHNOLOGY"));
+        categoryList.add(new Category(7,"TECHNOLOGY"));
         return categoryList;
     }
 }

@@ -1,7 +1,7 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<data class="FeedItemBinding" />
+    <data class="FeedItemBinding" />
     <androidx.cardview.widget.CardView
         android:layout_marginLeft="11dp"
         android:layout_marginRight="11dp"

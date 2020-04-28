@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.social.R;
+import com.example.social.listener.OnFeedClickListener;
 import com.example.social.model.Category;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
     private List<Category> categoryList;
     private Context context;
-    private OnItemClickListener onItemClickListener;
+    private OnFeedClickListener onItemClickListener;
     public CategoriesAdapter(List<Category> categoryList, Context context) {
         this.categoryList = categoryList;
         this.context = context;
@@ -39,12 +40,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public int getItemCount() {
         return categoryList.size();
     }
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
-        this.onItemClickListener = onItemClickListener;
+    public void setOnItemClickListener(OnFeedClickListener onFeedClickListener){
+        this.onItemClickListener = onFeedClickListener;
     }
-    public interface OnItemClickListener {
-        void onClick(View view, int position);
-    }
+
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView textCategory;
         ViewHolder(@NonNull View itemView) {
@@ -55,7 +54,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         @Override
         public void onClick(View v) {
-            onItemClickListener.onClick(itemView,getAdapterPosition());
+            onItemClickListener.onCategoryClick(itemView,getAdapterPosition());
         }
     }
 }
