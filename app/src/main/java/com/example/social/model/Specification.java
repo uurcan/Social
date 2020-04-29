@@ -10,7 +10,7 @@ public class Specification {
     private int currentPage;
 
     public int getCurrentPage() {
-        return 1;
+        return currentPage;
     }
 
     public void setCurrentPage(int currentPage) {
