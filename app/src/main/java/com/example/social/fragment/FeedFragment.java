@@ -37,13 +37,14 @@ import com.example.social.model.Specification;
 import java.util.List;
 
 public class FeedFragment extends Fragment implements OnFeedClickListener,
-                                                      SwipeRefreshLayout.OnRefreshListener{
+                                                      SwipeRefreshLayout.OnRefreshListener,
+                                                      View.OnClickListener{
     private FeedListAdapter feedListAdapter;
     private FragmentFeedBinding fragmentFeedBinding;
     private List<Category> categories;
     private FeedViewModel viewModel;
     private Specification specification;
-
+    private int pageIndex = 1;
     public FeedFragment() {
         // Required empty public constructor
     }
@@ -66,8 +67,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         initializeCategories();
         initializeFeed();
         initializeToolbar();
+        initializePageDirector();
     }
-
     private void initializeCategories() {
         CategoryVariables variables = new CategoryVariables();
         categories = variables.getCategories();
@@ -88,18 +89,9 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     }
 
     private void initializeFeed() {
-        fragmentFeedBinding.swipeRefreshFeed.setOnRefreshListener(this);
-        fragmentFeedBinding.listFeed.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (!recyclerView.canScrollVertically(1)){
-                    reduceRecyclerViewHeightForViewPagingDirector();
-                }
-            }
-        });
         specification = new Specification();
         viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+        fragmentFeedBinding.swipeRefreshFeed.setOnRefreshListener(this);
         fragmentFeedBinding.listFeed.setLayoutManager(new LinearLayoutManager(getContext()));
         feedListAdapter = new FeedListAdapter(null,getContext());
         initializeLiveData();
@@ -108,9 +100,6 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         fragmentFeedBinding.listFeed.setAdapter(feedListAdapter);
     }
 
-    private void reduceRecyclerViewHeightForViewPagingDirector() {
-        fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,11.0f));
-    }
 
     @Override
     public void onRefresh() {
@@ -118,6 +107,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     }
 
     private void initializeLiveData(){
+        fragmentFeedBinding.listFeed.smoothScrollToPosition(0);
         fragmentFeedBinding.swipeRefreshFeed.setRefreshing(true);
         viewModel.getPagedListLiveData(specification).observe(this, articles -> {
             if (articles != null){
@@ -151,10 +141,44 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
 
     @Override
     public void onCategoryClick(View view, int position) {
-        Toast.makeText(getContext(),categories.get(position).getName(),Toast.LENGTH_SHORT).show();
+        pageIndex = 1;
         specification.setCategory(categories.get(position).getName());
-        fragmentFeedBinding.listFeed.smoothScrollToPosition(0);
         initializeLiveData();
     }
+    private void initializePageDirector() {
+        fragmentFeedBinding.listFeed.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1)){
+                    fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,11.0f));
+                } else {
+                    fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,12.0f));
+                }
+            }
+        });
+        fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
+        fragmentFeedBinding.imagePagingGoForward.setOnClickListener(this);
+        fragmentFeedBinding.imagePagingGoBack.setOnClickListener(this);
+    }
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.image_paging_go_back){
+            //todo: not working properly
+            pageIndex -= 1;
+            specification.setCurrentPage(pageIndex);
+            fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
+            initializeLiveData();
+        } else if (v.getId() == R.id.image_paging_go_forward){
+            pageIndex += 1;
+            specification.setCurrentPage(pageIndex);
+            fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
+            initializeLiveData();
+        }
+        if (pageIndex == 1)
+            fragmentFeedBinding.imagePagingGoBack.setVisibility(View.GONE);
+        else
+            fragmentFeedBinding.imagePagingGoBack.setVisibility(View.VISIBLE);
+    }
 }
