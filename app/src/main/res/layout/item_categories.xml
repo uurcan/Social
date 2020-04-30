@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:layout_gravity="center"
     android:layout_margin="3dp"
     android:background="@drawable/categories_background"
     xmlns:android="http://schemas.android.com/apk/res/android"
