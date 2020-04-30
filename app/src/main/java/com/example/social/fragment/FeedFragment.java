@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +44,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     private FeedViewModel viewModel;
     private Specification specification;
     private int pageIndex = 1;
+    private CategoryVariables variables = new CategoryVariables();
+
     public FeedFragment() {
         // Required empty public constructor
     }
@@ -64,13 +65,13 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initializeToolbar();
         initializeCategories();
         initializeFeed();
-        initializeToolbar();
         initializePageDirector();
     }
+
     private void initializeCategories() {
-        CategoryVariables variables = new CategoryVariables();
         categories = variables.getCategories();
         CategoriesAdapter adapter = new CategoriesAdapter(categories,getContext());
         adapter.setOnItemClickListener(this);
@@ -99,7 +100,6 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         //viewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         fragmentFeedBinding.listFeed.setAdapter(feedListAdapter);
     }
-
 
     @Override
     public void onRefresh() {
@@ -142,6 +142,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     @Override
     public void onCategoryClick(View view, int position) {
         pageIndex = 1;
+        specification.setCurrentPage(pageIndex);
         specification.setCategory(categories.get(position).getName());
         initializeLiveData();
     }
@@ -160,12 +161,15 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
         fragmentFeedBinding.imagePagingGoForward.setOnClickListener(this);
         fragmentFeedBinding.imagePagingGoBack.setOnClickListener(this);
+        if (pageIndex == 1) {
+            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.color.white);
+            fragmentFeedBinding.imagePagingGoBack.setClickable(false);
+        }
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.image_paging_go_back){
-            //todo: not working properly
             pageIndex -= 1;
             specification.setCurrentPage(pageIndex);
             fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
@@ -176,9 +180,13 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
             fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
             initializeLiveData();
         }
-        if (pageIndex == 1)
-            fragmentFeedBinding.imagePagingGoBack.setVisibility(View.GONE);
-        else
-            fragmentFeedBinding.imagePagingGoBack.setVisibility(View.VISIBLE);
+        if (pageIndex == 1) {
+            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.color.white);
+            fragmentFeedBinding.imagePagingGoBack.setClickable(false);
+        }
+        else {
+            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.drawable.ic_prev_page);
+            fragmentFeedBinding.imagePagingGoBack.setClickable(true);
+        }
     }
 }
