@@ -4,7 +4,9 @@
     package="com.example.social">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
+        android:name=".App"
         android:largeHeap="true"
         android:allowBackup="true"
         android:icon="@drawable/application_logo_black"

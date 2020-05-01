@@ -54,7 +54,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         @Override
         public void onClick(View v) {
-            onItemClickListener.onCategoryClick(itemView,getAdapterPosition());
+            onItemClickListener.onCategoryClick(categoryList.get(getAdapterPosition()));
         }
     }
 }

@@ -10,7 +10,6 @@
         android:layout_height="wrap_content">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_gravity="center"
             android:background="?android:attr/selectableItemBackground"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

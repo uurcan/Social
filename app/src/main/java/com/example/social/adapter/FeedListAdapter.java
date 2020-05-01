@@ -141,6 +141,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void bindTo(Article article){
             feedItemBinding.txtFeedDescription.setVisibility(View.VISIBLE);
             feedItemBinding.txtFeedAuthor.setText(article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor());
+            feedItemBinding.txtFeedSource.setText(article.getSource().getName());
             feedItemBinding.txtFeedTitle.setText(article.getTitle());
             feedItemBinding.txtFeedTime.setText(DateFormat.formatDate(article.getPublishedAt()));
             feedItemBinding.txtPublishDate.setText(DateFormat.formatDate(article.getPublishedAt()));

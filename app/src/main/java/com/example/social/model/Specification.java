@@ -6,7 +6,7 @@ public class Specification {
     private String category;
     private String country = Locale.getDefault().getCountry().toLowerCase();
     private String language = null;
-    //todo: paging director
+
     private int currentPage;
 
     public int getCurrentPage() {
