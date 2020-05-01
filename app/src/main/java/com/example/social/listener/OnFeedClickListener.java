@@ -1,10 +1,9 @@
 package com.example.social.listener;
 
-import android.view.View;
-
 import com.example.social.model.Article;
+import com.example.social.model.Category;
 
 public interface OnFeedClickListener {
     void onFeedClick(Article article);
-    void onCategoryClick(View view,int position);
+    void onCategoryClick(Category category);
 }

@@ -9,21 +9,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.social.R;
 import com.example.social.constants.Constants;
+import com.example.social.databinding.ActivityDetailsBinding;
 import com.example.social.utils.ApplicationUtils;
 import com.example.social.utils.DateFormat;
 import com.google.android.material.appbar.AppBarLayout;
@@ -32,17 +30,13 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import java.util.Objects;
 
 public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
-    private FrameLayout layoutFeedDate;
-    private TextView titleFeedDetailToolbar,subtitleFeedDetailToolbar,dateFeedDetail,timeFeedDetail,titleFeedDetail,descriptionFeedDetail;
     private String feedURL,feedSource,feedTitle;
-    private ImageView imageView;
     private boolean isToolbarHidden;
-    private LinearLayout layoutFeedDetail;
-
+    private ActivityDetailsBinding activityDetailsBinding;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed_details);
+        activityDetailsBinding = DataBindingUtil.setContentView(this,R.layout.activity_feed_details);
         initializeToolbar();
         initializeComponents();
         initializeFeedDetails();
@@ -50,17 +44,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
     }
 
     private void initializeComponents() {
-        AppBarLayout appBarLayout = findViewById(R.id.application_bar);
-        appBarLayout.addOnOffsetChangedListener(this);
-        titleFeedDetailToolbar = findViewById(R.id.feed_title_toolbar);
-        subtitleFeedDetailToolbar = findViewById(R.id.feed_subtitle_toolbar);
-        layoutFeedDetail = findViewById(R.id.toolbar_feed_detail);
-        dateFeedDetail = findViewById(R.id.feed_detail_datetime);
-        timeFeedDetail = findViewById(R.id.feed_details_timezone);
-        titleFeedDetail = findViewById(R.id.feed_detail_title);
-        descriptionFeedDetail = findViewById(R.id.feed_detail_description);
-        layoutFeedDate = findViewById(R.id.feed_details_date);
-        imageView = findViewById(R.id.back_drop_feed_Detail);
+        activityDetailsBinding.applicationBar.addOnOffsetChangedListener(this);
     }
 
     private void initializeFeedDetails(){
@@ -68,22 +52,24 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         if (bundle != null ){
             feedURL = bundle.getString(Constants.URL);
             feedTitle = bundle.getString(Constants.TITLE);
+            feedSource = bundle.getString(Constants.SOURCE);
+
             String feedAuthor = bundle.getString(Constants.AUTHOR);
-            StringBuilder feedInfo = new StringBuilder().append(bundle.getString(Constants.SOURCE) == null ||
-                            feedAuthor == null ? "Anonymous" : bundle.getString(Constants.SOURCE))
+            StringBuilder feedInfo = new StringBuilder().append(feedSource == null ||
+                            feedAuthor == null ? "Anonymous" : feedSource)
                     .append(" - ").append(ApplicationUtils.getDate(bundle.getString(Constants.DATE)));
 
-            titleFeedDetailToolbar.setText(bundle.getString(Constants.TITLE));
-            subtitleFeedDetailToolbar.setText(feedURL);
-            dateFeedDetail.setText(DateFormat.formatDate(bundle.getString(Constants.DATE)));
-            titleFeedDetail.setText(bundle.getString(Constants.TITLE));
-            timeFeedDetail.setText(feedInfo);
-            descriptionFeedDetail.setText(bundle.getString(Constants.DESCRIPTION));
+            activityDetailsBinding.feedTitleToolbar.setText(bundle.getString(Constants.TITLE));
+            activityDetailsBinding.feedSubtitleToolbar.setText(feedURL);
+            activityDetailsBinding.feedDetailDatetime.setText(DateFormat.formatDate(bundle.getString(Constants.DATE)));
+            activityDetailsBinding.feedDetailTitle.setText(feedTitle);
+            activityDetailsBinding.feedDetailsTimezone.setText(feedInfo);
+            activityDetailsBinding.feedDetailDescription.setText(bundle.getString(Constants.DESCRIPTION));
             Glide.with(this)
                     .load(bundle.getString(Constants.IMAGE))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.placeholder640)
-                    .into(imageView);
+                    .into(activityDetailsBinding.backDropFeedDetail);
 
         }
     }
@@ -125,12 +111,12 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         int maxScroll = appBarLayout.getTotalScrollRange();
         float percentage = (float) Math.abs(verticalOffset)/(float) maxScroll;
         if (percentage == 1f && isToolbarHidden){
-            layoutFeedDate.setVisibility(View.GONE);
-            layoutFeedDetail.setVisibility(View.VISIBLE);
+            activityDetailsBinding.feedDetailsDate.setVisibility(View.GONE);
+            activityDetailsBinding.toolbarFeedDetail.setVisibility(View.VISIBLE);
             isToolbarHidden = !isToolbarHidden;
         }else if(percentage < 1f && !isToolbarHidden){
-            layoutFeedDate.setVisibility(View.VISIBLE);
-            layoutFeedDetail.setVisibility(View.GONE);
+            activityDetailsBinding.feedDetailsDate.setVisibility(View.VISIBLE);
+            activityDetailsBinding.toolbarFeedDetail.setVisibility(View.GONE);
             isToolbarHidden = !isToolbarHidden;
         }
     }
@@ -160,7 +146,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
                     intent.putExtra(Intent.EXTRA_TEXT,body);
                     startActivity(Intent.createChooser(intent,getString(R.string.textShareWith)));
                     break;
-                }catch (Exception e){
+                } catch (Exception e){
                     Toast.makeText(this, "Unable to share", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }

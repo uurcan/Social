@@ -39,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.navigation_headlines:
+                if (feedFragment == null){
+                    feedFragment = FeedFragment.newInstance();
+                }
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragment_container,feedFragment)
                         .commit();

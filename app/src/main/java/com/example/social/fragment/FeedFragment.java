@@ -1,6 +1,9 @@
 package com.example.social.fragment;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,11 +24,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.social.App;
 import com.example.social.R;
 import com.example.social.adapter.CategoriesAdapter;
+import com.example.social.listener.ConnectivityReceiverListener;
 import com.example.social.listener.OnFeedClickListener;
 import com.example.social.model.Category;
 import com.example.social.model.CategoryVariables;
+import com.example.social.receivers.ConnectivityReceiver;
 import com.example.social.ui.FeedDetailsActivity;
 import com.example.social.adapter.FeedListAdapter;
 import com.example.social.constants.Constants;
@@ -34,17 +41,17 @@ import com.example.social.model.Article;
 import com.example.social.model.Specification;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FeedFragment extends Fragment implements OnFeedClickListener,
                                                       SwipeRefreshLayout.OnRefreshListener,
-                                                      View.OnClickListener{
+                                                      View.OnClickListener,
+                                                      ConnectivityReceiverListener {
     private FeedListAdapter feedListAdapter;
     private FragmentFeedBinding fragmentFeedBinding;
-    private List<Category> categories;
     private FeedViewModel viewModel;
     private Specification specification;
     private int pageIndex = 1;
-    private CategoryVariables variables = new CategoryVariables();
 
     public FeedFragment() {
         // Required empty public constructor
@@ -52,6 +59,11 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -72,10 +84,11 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     }
 
     private void initializeCategories() {
-        categories = variables.getCategories();
-        CategoriesAdapter adapter = new CategoriesAdapter(categories,getContext());
-        adapter.setOnItemClickListener(this);
-        fragmentFeedBinding.categoriesFeed.setAdapter(adapter);
+        CategoryVariables categoryVariables = new CategoryVariables();
+        List<Category> categories = categoryVariables.getCategories();
+        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, getContext());
+        categoriesAdapter.setOnItemClickListener(this);
+        fragmentFeedBinding.categoriesFeed.setAdapter(categoriesAdapter);
     }
 
     private void initializeToolbar() {
@@ -86,6 +99,18 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
                     ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
                 }
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        final IntentFilter intentFilter = new IntentFilter();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentFilter.addAction(ConnectivityManager.EXTRA_CAPTIVE_PORTAL);
+            ConnectivityReceiver receiver = new ConnectivityReceiver();
+            Objects.requireNonNull(getContext()).registerReceiver(receiver, intentFilter);
+            App.getInstance().setConnectivityListener(this);
         }
     }
 
@@ -118,6 +143,61 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     }
 
     @Override
+    public void onCategoryClick(Category category) {
+        pageIndex = 1;
+        specification.setCurrentPage(pageIndex);
+        specification.setCategory(category.getName());
+        fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
+        initializeLiveData();
+        checkCurrentPage();
+    }
+
+    private void initializePageDirector() {
+        fragmentFeedBinding.listFeed.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1)){
+                    fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,11.0f));
+                } else {
+                    fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,12.0f));
+                }
+            }
+        });
+        fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
+        fragmentFeedBinding.imagePagingGoForward.setOnClickListener(this);
+        fragmentFeedBinding.imagePagingGoBack.setOnClickListener(this);
+        checkCurrentPage();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.image_paging_go_back){
+            pageIndex -= 1;
+            specification.setCurrentPage(pageIndex);
+            fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
+            initializeLiveData();
+        } else if (v.getId() == R.id.image_paging_go_forward){
+            pageIndex += 1;
+            specification.setCurrentPage(pageIndex);
+            fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
+            initializeLiveData();
+        }
+        checkCurrentPage();
+    }
+
+    private void checkCurrentPage(){
+        if (pageIndex <= 1) {
+            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.color.white);
+            fragmentFeedBinding.imagePagingGoBack.setClickable(false);
+        }
+        else {
+            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.drawable.ic_prev_page);
+            fragmentFeedBinding.imagePagingGoBack.setClickable(true);
+        }
+    }
+
+    @Override
     public void onFeedClick(Article article) {
         if (getActivity() != null && getView() != null) {
             Intent intent = new Intent(getContext(), FeedDetailsActivity.class);
@@ -140,53 +220,15 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     }
 
     @Override
-    public void onCategoryClick(View view, int position) {
-        pageIndex = 1;
-        specification.setCurrentPage(pageIndex);
-        specification.setCategory(categories.get(position).getName());
-        initializeLiveData();
-    }
-    private void initializePageDirector() {
-        fragmentFeedBinding.listFeed.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (!recyclerView.canScrollVertically(1)){
-                    fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,11.0f));
-                } else {
-                    fragmentFeedBinding.rvItemFeedLayout.setLayoutParams(new LinearLayout.LayoutParams(-1,0,12.0f));
-                }
-            }
-        });
-        fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
-        fragmentFeedBinding.imagePagingGoForward.setOnClickListener(this);
-        fragmentFeedBinding.imagePagingGoBack.setOnClickListener(this);
-        if (pageIndex == 1) {
-            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.color.white);
-            fragmentFeedBinding.imagePagingGoBack.setClickable(false);
-        }
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        checkConnectivity(isConnected);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.image_paging_go_back){
-            pageIndex -= 1;
-            specification.setCurrentPage(pageIndex);
-            fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
-            initializeLiveData();
-        } else if (v.getId() == R.id.image_paging_go_forward){
-            pageIndex += 1;
-            specification.setCurrentPage(pageIndex);
-            fragmentFeedBinding.textPagingCurrentPage.setText(String.valueOf(pageIndex));
-            initializeLiveData();
-        }
-        if (pageIndex == 1) {
-            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.color.white);
-            fragmentFeedBinding.imagePagingGoBack.setClickable(false);
-        }
-        else {
-            fragmentFeedBinding.imagePagingGoBack.setImageResource(R.drawable.ic_prev_page);
-            fragmentFeedBinding.imagePagingGoBack.setClickable(true);
+    private void checkConnectivity(boolean isConnected){
+        if (!isConnected){
+            Toast.makeText(getContext(), "Offline", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Online !", Toast.LENGTH_SHORT).show();
         }
     }
 }
