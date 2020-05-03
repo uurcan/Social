@@ -83,14 +83,6 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         initializePageDirector();
     }
 
-    private void initializeCategories() {
-        CategoryVariables categoryVariables = new CategoryVariables();
-        List<Category> categories = categoryVariables.getCategories();
-        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, getContext());
-        categoriesAdapter.setOnItemClickListener(this);
-        fragmentFeedBinding.categoriesFeed.setAdapter(categoriesAdapter);
-    }
-
     private void initializeToolbar() {
         if (getView() != null) {
             if (getActivity() != null) {
@@ -124,6 +116,14 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         feedListAdapter.setOnFeedClickListener(this);
         //viewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         fragmentFeedBinding.listFeed.setAdapter(feedListAdapter);
+    }
+
+    private void initializeCategories() {
+        CategoryVariables categoryVariables = new CategoryVariables();
+        List<Category> categories = categoryVariables.getCategories();
+        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, getContext());
+        categoriesAdapter.setOnItemClickListener(this);
+        fragmentFeedBinding.categoriesFeed.setAdapter(categoriesAdapter);
     }
 
     @Override
