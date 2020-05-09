@@ -21,50 +21,55 @@ import com.example.social.fragment.ProfileFragment;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity{
     private final FragmentManager fragmentManager = getSupportFragmentManager();
-    private ActivityMainBinding activityMainBinding;
     private FeedFragment feedFragment;
     private ProfileFragment profileFragment;
     private MessageFragment messageFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityMainBinding activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        activityMainBinding.navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         initializeToolbar();
-        initializeSavedInstanceState(savedInstanceState);
+        fragmentManager.beginTransaction()
+               .replace(R.id.fragment_container, new FeedFragment())
+               .commit();
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.navigation_headlines:
-                if (feedFragment == null){
-                    feedFragment = FeedFragment.newInstance();
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()){
+                        case R.id.navigation_headlines:
+                            if (feedFragment == null){
+                                feedFragment = FeedFragment.newInstance();
+                            }
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container,feedFragment)
+                                    .commit();
+                            return true;
+                        case R.id.navigation_saved:
+                            if (messageFragment == null){
+                                messageFragment = MessageFragment.newInstance();
+                            }
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container,messageFragment)
+                                    .commit();
+                            return true;
+                        case R.id.navigation_sources:
+                            if (profileFragment == null){
+                                profileFragment = ProfileFragment.newInstance();
+                            }
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container,profileFragment)
+                                    .commit();
+                            return true;
+                    }
+                    return false;
                 }
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container,feedFragment)
-                        .commit();
-                return true;
-            case R.id.navigation_saved:
-                if (messageFragment == null){
-                    messageFragment = MessageFragment.newInstance();
-                }
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container,messageFragment)
-                        .commit();
-                return true;
-            case R.id.navigation_sources:
-                if (profileFragment == null){
-                    profileFragment = ProfileFragment.newInstance();
-                }
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container,profileFragment)
-                        .commit();
-                return true;
-        }
-        return false;
-    }
+            };
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -88,13 +93,4 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setSupportActionBar(toolbar);
     }
 
-    private void initializeSavedInstanceState(Bundle savedInstanceState) {
-        activityMainBinding.navigation.setOnNavigationItemSelectedListener(this);
-        if (savedInstanceState == null){
-            feedFragment = FeedFragment.newInstance();
-            fragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, feedFragment)
-                    .commit();
-        }
-    }
 }

@@ -69,18 +69,21 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.fragmentFeedBinding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_feed, container, false);
-        return this.fragmentFeedBinding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        fragmentFeedBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_feed, container, false);
         initializeToolbar();
         initializeCategories();
         initializeFeed();
         initializePageDirector();
+        return fragmentFeedBinding.getRoot();
+    }
+
+    private void initializeCategories() {
+        RecyclerView recyclerView = fragmentFeedBinding.categoriesFeed;
+        CategoryVariables categoryVariables = new CategoryVariables();
+        List<Category> categories = categoryVariables.getCategories();
+        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, getContext());
+        categoriesAdapter.setOnItemClickListener(this);
+        recyclerView.setAdapter(categoriesAdapter);
     }
 
     private void initializeToolbar() {
@@ -114,16 +117,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         feedListAdapter = new FeedListAdapter(null,getContext());
         initializeLiveData();
         feedListAdapter.setOnFeedClickListener(this);
-        //viewModel.getNetworkState().observe(this,networkState -> feedListAdapter.setNetworkState(networkState));
         fragmentFeedBinding.listFeed.setAdapter(feedListAdapter);
-    }
-
-    private void initializeCategories() {
-        CategoryVariables categoryVariables = new CategoryVariables();
-        List<Category> categories = categoryVariables.getCategories();
-        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, getContext());
-        categoriesAdapter.setOnItemClickListener(this);
-        fragmentFeedBinding.categoriesFeed.setAdapter(categoriesAdapter);
     }
 
     @Override
