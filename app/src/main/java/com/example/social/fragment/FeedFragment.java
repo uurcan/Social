@@ -90,7 +90,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         if (getView() != null) {
             if (getActivity() != null) {
                 if (getActivity().getActionBar() != null) {
-                    Toolbar toolbar = getView().findViewById(R.id.toolbar_main);
+                    Toolbar toolbar = getView().findViewById(R.id.toolbar);
                     ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
                 }
             }
