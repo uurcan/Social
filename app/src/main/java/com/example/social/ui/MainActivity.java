@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -33,8 +34,8 @@ public class MainActivity extends AppCompatActivity{
         activityMainBinding.navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         initializeToolbar();
         fragmentManager.beginTransaction()
-               .replace(R.id.fragment_container, new FeedFragment())
-               .commit();
+                .replace(R.id.fragment_container, new FeedFragment())
+                .commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
@@ -87,10 +88,17 @@ public class MainActivity extends AppCompatActivity{
         getApplicationContext().getSharedPreferences(Constants.AUTH_PERSISTENCE, Context.MODE_PRIVATE).edit().clear().apply();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return true;
+    }
     private void initializeToolbar(){
-        Toolbar toolbar =  findViewById(R.id.toolbar_main);
-        toolbar.inflateMenu(R.menu.menu);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Social");
+        }
     }
 
 }

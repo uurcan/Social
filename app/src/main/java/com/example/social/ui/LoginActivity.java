@@ -129,10 +129,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 firebaseLogin();
                 break;
             case R.id.txt_sign_up:
-                providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
+                startActivity(new Intent(this,SignUpActivity.class));
+                /*providers = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
                         new AuthUI.IdpConfig.FacebookBuilder().build(),
                         new AuthUI.IdpConfig.GoogleBuilder().build());
-                showSignInOptions();
+                showSignInOptions();*/
                 break;
             case R.id.txt_forgot_pass:
                 startActivity(new Intent(getApplicationContext(),ForgotPasswordActivity.class));

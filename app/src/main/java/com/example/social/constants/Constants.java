@@ -1,7 +1,6 @@
 package com.example.social.constants;
 
 public interface Constants {
-    String bitcoinQuery = "bitcoin";
     String API_KEY = "09e78df5c8984487ab7eb5b68577cab0";
     String AUTH_PERSISTENCE = "authPersistence";
     String AUTO_SIGN = "autoSign";
@@ -11,6 +10,5 @@ public interface Constants {
     String DATE = "feedDate";
     String URL = "feedURL";
     String SOURCE = "feedSource";
-    String ARTICLE_PARAMS = "article_details";
     String DESCRIPTION = "description" ;
 }
