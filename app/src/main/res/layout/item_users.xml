@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data class = "ItemUsersBinding"/>
+<RelativeLayout
+    android:layout_margin="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:src="@drawable/application_logo_black"
+        android:id="@+id/userProfileImage"
+        android:layout_centerVertical="true"
+        android:layout_width="@dimen/thumbnail"
+        android:layout_height="@dimen/thumbnail"/>
+    <TextView
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Test Example"
+        android:layout_toRightOf="@+id/userProfileImage"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#333333"
+        android:id="@+id/textUsernameMsg"
+        android:textSize="@dimen/contact_name"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Test Example"
+        android:id="@+id/userStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#838383"
+        android:layout_below="@+id/textUsernameMsg"
+        android:layout_toRightOf="@+id/userProfileImage"/>
+</RelativeLayout>
+</layout>

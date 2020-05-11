@@ -22,11 +22,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import javax.xml.transform.Transformer;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessageFragment extends Fragment {
     private FragmentMessageBinding fragmentMessageBinding;
-    private CircleImageView circleImageView;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
     public MessageFragment() {
@@ -45,23 +46,16 @@ public class MessageFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         this.fragmentMessageBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_message, container, false);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Messaging");
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                MessagingPagerAdapter messagingPagerAdapter = new MessagingPagerAdapter(
-                        getActivity().getSupportFragmentManager(),1
-                );
-                messagingPagerAdapter.addFragment(new ChatsFragment(), "Chats");
-                messagingPagerAdapter.addFragment(new ContactsFragment(),"Contacts");
-                fragmentMessageBinding.viewPager.setAdapter(messagingPagerAdapter);
-                fragmentMessageBinding.tabLayout.setupWithViewPager(fragmentMessageBinding.viewPager);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        if (getActivity() != null) {
+            MessagingPagerAdapter messagingPagerAdapter = new MessagingPagerAdapter(
+                    getActivity().getSupportFragmentManager(), 1
+            );
+            messagingPagerAdapter.addFragment(new ChatsFragment(), "Chats");
+            messagingPagerAdapter.addFragment(new ContactsFragment(), "Contacts");
+            fragmentMessageBinding.viewPager.setAdapter(messagingPagerAdapter);
+            fragmentMessageBinding.tabLayout.setupWithViewPager(fragmentMessageBinding.viewPager);
+        }
         return this.fragmentMessageBinding.getRoot();
     }
 }

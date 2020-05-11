@@ -40,6 +40,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public int getItemCount() {
         return categoryList.size();
     }
+
     public void setOnItemClickListener(OnFeedClickListener onFeedClickListener){
         this.onItemClickListener = onFeedClickListener;
     }
