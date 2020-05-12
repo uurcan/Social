@@ -1,31 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data class="ActivityMessagingBinding"/>
-<LinearLayout
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:background="#000"
         android:layout_height="wrap_content"
+        android:background="#000"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
             android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/profile_image"/>
-
+            android:layout_height="30dp" />
         <TextView
+            android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/username"
-            android:textSize="18sp"
+            android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:textColor="#fff"
-            android:textStyle="bold"
-            android:layout_marginStart="25dp" />
-
+            android:textSize="14sp"
+            android:textStyle="normal" />
     </androidx.appcompat.widget.Toolbar>
-</LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/toolbar"
+        android:id="@+id/recyclerMessagingField"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="55dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:padding="5dp">
+
+        <ImageView
+            android:contentDescription="@null"
+            android:id="@+id/imgSendImage"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_send_image"
+            android:padding="5dp"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtMessageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:ems="10"
+            android:hint="@string/textMessage"
+            android:padding="10dp" />
+
+        <ImageView
+            android:contentDescription="@null"
+            android:id="@+id/imgSendMessage"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_send_message"
+            android:padding="5dp"/>
+
+    </LinearLayout>
+</RelativeLayout>
 </layout>

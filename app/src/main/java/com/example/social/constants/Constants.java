@@ -12,4 +12,7 @@ public interface Constants {
     String SOURCE = "feedSource";
     String DESCRIPTION = "description" ;
     String USER_ID = "user_id";
+    String SENDER = "sender";
+    String RECEIVER = "receiver";
+    String MESSAGE = "message";
 }

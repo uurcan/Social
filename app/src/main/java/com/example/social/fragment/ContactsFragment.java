@@ -70,7 +70,7 @@ public class ContactsFragment extends Fragment implements ContactsClickListener 
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                //empty method
             }
         });
     }
