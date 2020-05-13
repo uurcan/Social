@@ -4,7 +4,7 @@ public class Messages {
     private String sender;
     private String receiver;
     private String message;
-
+    public Messages(){}
     public Messages(String sender,String receiver,String message){
         this.sender = sender;
         this.receiver = receiver;

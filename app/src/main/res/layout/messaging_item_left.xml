@@ -7,7 +7,8 @@
         android:background="@drawable/send_message_left"
         android:textColor="#000"
         android:padding="8dp"
-        android:text="@string/lorem_ipsum"
+        android:id="@+id/txtMessage"
+        android:text="@string/SocialText"
         android:layout_width="wrap_content"
         android:layout_margin="5dp"
         android:layout_height="wrap_content"/>
