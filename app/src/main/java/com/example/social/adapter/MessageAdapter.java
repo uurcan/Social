@@ -43,7 +43,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
         Messages message = messagesList.get(position);
-        holder.textMessage.setText(message.getMessage());
+        holder.textMessage.setText(String.valueOf(message.getMessage()));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public int getItemViewType(int position) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (messagesList.get(position).getSender().equals(firebaseUser.getUid())){
-            return  MESSAGE_TYPE_RIGHT;
+            return MESSAGE_TYPE_RIGHT;
         }else {
             return MESSAGE_TYPE_LEFT;
         }

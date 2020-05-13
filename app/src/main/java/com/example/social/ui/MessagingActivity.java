@@ -79,7 +79,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                             Glide.with(getApplicationContext()).load(contact.getImageURL())
                                     .into(toolbarUserProfile);
                         }
-                        //todo : add here last display line..
+                        readFirebaseMessage(firebaseUser.getUid(),contact.getId());
                     }
                 }
                 @Override
@@ -100,22 +100,21 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.imgSendMessage:
-                sendFirebaseMessage();
-                break;
+        if (v.getId() == R.id.imgSendMessage) {
+            sendFirebaseMessage();
         }
     }
     private void sendFirebaseMessage(){
         String message = Objects.requireNonNull(activityMessagingBinding.edtMessageInput.getText()).toString();
         if (!message.equals("")){
             sendMessage(firebaseUser.getUid(),bundle.getString(Constants.USER_ID),message);
-
+            activityMessagingBinding.edtMessageInput.setText("");
         } else {
             Toast.makeText(this, "No message defined !", Toast.LENGTH_SHORT).show();
         }
     }
-    private void readFirebaseMessage(String userID,String companyID,String message){
+
+    private void readFirebaseMessage(String userID,String companyID){
         messagesList = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -125,15 +124,13 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                 for (DataSnapshot snapshot:dataSnapshot.getChildren()){
                     Messages messages = snapshot.getValue(Messages.class);
                     if (messages != null) {
-                        if (messages.getReceiver().equals(userID) &&
-                            messages.getSender().equals(companyID) &&
-                            messages.getReceiver().equals(companyID) &&
-                            messages.getSender().equals(userID)){
+                        if (messages.getReceiver().equals(userID) && messages.getSender().equals(companyID) ||
+                            messages.getReceiver().equals(companyID) && messages.getSender().equals(userID)) {
                             messagesList.add(messages);
                         }
-                        messageAdapter = new MessageAdapter(messagesList,getApplicationContext());
-                        activityMessagingBinding.recyclerMessagingField.setAdapter(messageAdapter);
                     }
+                    messageAdapter = new MessageAdapter(messagesList,getApplicationContext());
+                    activityMessagingBinding.recyclerMessagingField.setAdapter(messageAdapter);
                 }
             }
 
