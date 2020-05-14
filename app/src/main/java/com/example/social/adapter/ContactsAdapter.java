@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.social.R;
 import com.example.social.listener.ContactsClickListener;
-import com.example.social.model.Contact;
+import com.example.social.model.messaging.Contact;
 
 import java.util.List;
 

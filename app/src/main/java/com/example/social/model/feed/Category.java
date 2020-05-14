@@ -1,4 +1,4 @@
-package com.example.social.model;
+package com.example.social.model.feed;
 
 public class Category  {
     private int icon;

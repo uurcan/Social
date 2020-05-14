@@ -1,4 +1,4 @@
-package com.example.social.model;
+package com.example.social.model.messaging;
 
 public class ChatList {
     public String id;

@@ -1,4 +1,4 @@
-package com.example.social.model;
+package com.example.social.model.feed;
 
 import java.util.ArrayList;
 import java.util.List;
