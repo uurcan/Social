@@ -17,7 +17,7 @@ import com.example.social.adapter.ContactsAdapter;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.UserFragmentBinding;
 import com.example.social.listener.ContactsClickListener;
-import com.example.social.model.Contact;
+import com.example.social.model.messaging.Contact;
 import com.example.social.ui.MessagingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -80,5 +80,6 @@ public class ContactsFragment extends Fragment implements ContactsClickListener 
         Intent intent = new Intent(getActivity(), MessagingActivity.class);
         intent.putExtra(Constants.USER_ID,contact.getId());
         startActivity(intent);
+        //todo: not working on ChatsFragment !
     }
 }

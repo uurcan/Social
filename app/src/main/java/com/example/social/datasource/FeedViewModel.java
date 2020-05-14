@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.social.model.Article;
+import com.example.social.model.feed.Article;
 import com.example.social.network.ArticleRepository;
 import com.example.social.utils.NetworkState;
-import com.example.social.model.Specification;
+import com.example.social.model.feed.Specification;
 
 import java.util.List;
 

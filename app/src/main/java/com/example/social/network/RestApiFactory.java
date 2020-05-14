@@ -7,13 +7,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.social.constants.Constants;
-import com.example.social.model.Article;
-import com.example.social.model.Feed;
-import com.example.social.model.Specification;
+import com.example.social.model.feed.Article;
+import com.example.social.model.feed.Feed;
+import com.example.social.model.feed.Specification;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +20,6 @@ import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;

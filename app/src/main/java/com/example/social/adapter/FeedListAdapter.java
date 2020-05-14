@@ -22,7 +22,7 @@ import com.example.social.R;
 import com.example.social.databinding.FeedItemBinding;
 import com.example.social.databinding.NetworkItemBinding;
 import com.example.social.listener.OnFeedClickListener;
-import com.example.social.model.Article;
+import com.example.social.model.feed.Article;
 import com.example.social.utils.DateFormat;
 import com.example.social.utils.NetworkState;
 

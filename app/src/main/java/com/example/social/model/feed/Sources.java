@@ -1,4 +1,4 @@
-package com.example.social.model;
+package com.example.social.model.feed;
 
 import android.os.Parcel;
 import android.os.Parcelable;

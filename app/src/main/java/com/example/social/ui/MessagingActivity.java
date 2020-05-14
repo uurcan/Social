@@ -18,8 +18,8 @@ import com.example.social.R;
 import com.example.social.adapter.MessageAdapter;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.ActivityMessagingBinding;
-import com.example.social.model.Contact;
-import com.example.social.model.Messages;
+import com.example.social.model.messaging.Contact;
+import com.example.social.model.messaging.Messages;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +42,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     ActivityMessagingBinding activityMessagingBinding;
     MessageAdapter messageAdapter;
     List<Messages> messagesList;
+    String userID;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
         activityMessagingBinding.recyclerMessagingField.setLayoutManager(linearLayoutManager);
         bundle = getIntent().getExtras();
         if (bundle != null) {
-            String userID = bundle.getString(Constants.USER_ID, "");
+            userID = bundle.getString(Constants.USER_ID, "");
             firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                     .child(userID);
@@ -96,6 +97,23 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
         hashMap.put(Constants.RECEIVER,receiver);
         hashMap.put(Constants.MESSAGE,message);
         databaseReference.child("Chats").push().setValue(hashMap);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(firebaseUser.getUid())
+                .child(userID);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()){
+                    reference.child("id").setValue(userID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

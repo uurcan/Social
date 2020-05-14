@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.social.R;
 import com.example.social.listener.OnFeedClickListener;
-import com.example.social.model.Category;
+import com.example.social.model.feed.Category;
 
 import java.util.List;
 

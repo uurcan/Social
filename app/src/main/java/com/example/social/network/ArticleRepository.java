@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.example.social.model.Article;
-import com.example.social.model.Specification;
+import com.example.social.model.feed.Article;
+import com.example.social.model.feed.Specification;
 
 import java.util.List;
 

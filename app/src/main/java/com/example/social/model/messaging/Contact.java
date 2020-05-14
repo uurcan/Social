@@ -1,4 +1,4 @@
-package com.example.social.model;
+package com.example.social.model.messaging;
 
 public class Contact {
     private String id;

@@ -1,6 +1,6 @@
 package com.example.social.network;
 
-import com.example.social.model.Feed;
+import com.example.social.model.feed.Feed;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
