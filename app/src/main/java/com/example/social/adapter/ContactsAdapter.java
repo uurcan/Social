@@ -22,9 +22,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     private List<Contact> contactList;
     private ContactsClickListener contactsClickListener;
 
-    public ContactsAdapter(Context context, List<Contact> contactList) {
+    public ContactsAdapter(Context context, List<Contact> contactList,ContactsClickListener contactsClickListener) {
         this.context = context;
         this.contactList = contactList;
+        this.contactsClickListener = contactsClickListener;
     }
 
     @NonNull
@@ -44,6 +45,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         } else {
             Glide.with(context).load(contact.getImageURL()).into(holder.userProfileImage);
         }
+        holder.itemView.setOnClickListener(v -> contactsClickListener.onContactClick(contactList.get(position)));
     }
 
     @Override
@@ -51,11 +53,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         return contactList.size();
     }
 
-    public void setContactsClickListener(ContactsClickListener contactsClickListener) {
-        this.contactsClickListener = contactsClickListener;
-    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textUsername,textStatus;
         private ImageView userProfileImage;
 
@@ -64,13 +63,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             textUsername = itemView.findViewById(R.id.textUsernameMsg);
             textStatus = itemView.findViewById(R.id.userStatus);
             userProfileImage = itemView.findViewById(R.id.userProfileImage);
-            userProfileImage.setOnClickListener(this);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-           contactsClickListener.onContactClick(contactList.get(getAdapterPosition()));
         }
     }
 }
