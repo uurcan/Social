@@ -30,7 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsFragment extends Fragment implements ContactsClickListener {
+public class ContactsFragment extends Fragment implements ContactsClickListener{
     private ContactsAdapter contactsAdapter;
     private List<Contact> contactList;
     private UserFragmentBinding userFragmentBinding;
@@ -47,8 +47,7 @@ public class ContactsFragment extends Fragment implements ContactsClickListener 
         userFragmentBinding.recyclerUserList.setLayoutManager(new LinearLayoutManager(getContext()));
         contactList = new ArrayList<>();
         readUserListData();
-        contactsAdapter = new ContactsAdapter(getContext(),contactList);
-        contactsAdapter.setContactsClickListener(this);
+        contactsAdapter = new ContactsAdapter(getContext(),contactList,this);
         return userFragmentBinding.getRoot();
     }
 
@@ -80,6 +79,5 @@ public class ContactsFragment extends Fragment implements ContactsClickListener 
         Intent intent = new Intent(getActivity(), MessagingActivity.class);
         intent.putExtra(Constants.USER_ID,contact.getId());
         startActivity(intent);
-        //todo: not working on ChatsFragment !
     }
 }

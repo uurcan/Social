@@ -21,6 +21,7 @@ import com.example.social.listener.ContactsClickListener;
 import com.example.social.model.messaging.ChatList;
 import com.example.social.model.messaging.Contact;
 
+import com.example.social.ui.MessagingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatsFragment extends Fragment {
+public class ChatsFragment extends Fragment implements ContactsClickListener {
     private ChatsFragmentBinding chatsFragmentBinding;
     private DatabaseReference databaseReference;
     private List<Contact> contactList;
@@ -77,6 +78,7 @@ public class ChatsFragment extends Fragment {
     private void readFirebaseChats() {
         contactList = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        contactsAdapter = new ContactsAdapter(getContext(),contactList,this);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -91,7 +93,6 @@ public class ChatsFragment extends Fragment {
                         }
                     }
                 }
-                contactsAdapter = new ContactsAdapter(getContext(),contactList);
                 chatsFragmentBinding.recyclerChatList.setAdapter(contactsAdapter);
             }
 
@@ -100,5 +101,12 @@ public class ChatsFragment extends Fragment {
                 //empty method
             }
         });
+    }
+
+    @Override
+    public void onContactClick(Contact contact) {
+        Intent intent = new Intent(getActivity(), MessagingActivity.class);
+        intent.putExtra(Constants.USER_ID,contact.getId());
+        startActivity(intent);
     }
 }
