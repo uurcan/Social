@@ -1,5 +1,6 @@
 package com.example.social.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -54,7 +55,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             getSupportActionBar().setTitle("");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         toolbarUsername = findViewById(R.id.username);
         toolbarUserProfile = findViewById(R.id.profile_image);
         activityMessagingBinding.imgSendMessage.setOnClickListener(this);
@@ -158,4 +159,22 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
+    /*private void setUserStatus(String status){
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("status",status);
+        databaseReference.updateChildren(hashMap);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setUserStatus("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        setUserStatus("offline");
+    }*/
 }

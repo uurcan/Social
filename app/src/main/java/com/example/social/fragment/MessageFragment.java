@@ -16,7 +16,6 @@ import com.example.social.R;
 import com.example.social.adapter.MessagingPagerAdapter;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.FragmentMessageBinding;
-import com.example.social.databinding.FragmentProfileBinding;
 import com.example.social.listener.ContactsClickListener;
 import com.example.social.model.messaging.Contact;
 import com.example.social.ui.MessagingActivity;
@@ -26,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 import javax.xml.transform.Transformer;
 
@@ -70,4 +71,22 @@ public class MessageFragment extends Fragment implements ContactsClickListener {
         intent.putExtra(Constants.USER_ID,contact.getId());
         startActivity(intent);
     }
+    /*private void setUserStatus(String status){
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("status",status);
+        databaseReference.updateChildren(hashMap);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setUserStatus("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        setUserStatus("offline");
+    }*/
 }

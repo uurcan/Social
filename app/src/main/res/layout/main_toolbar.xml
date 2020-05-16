@@ -7,18 +7,32 @@
     android:layout_height="wrap_content"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:src="@drawable/application_logo_white"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:id="@+id/profile_image"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/username"
-            android:textSize="18sp"
-            android:layout_marginLeft="25dp"
-            android:textColor="#fff"
-            android:textStyle="bold"
-            android:layout_marginStart="25dp" />
-
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+                <TextView
+                    android:text="@string/SocialText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/username"
+                    android:textSize="18sp"
+                    android:layout_marginLeft="25dp"
+                    android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:layout_marginStart="25dp" />
+                <TextView
+                    android:text="@string/app_name"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginLeft="25dp"
+                    android:textColor="#fff"
+                    android:id="@+id/status"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
 </androidx.appcompat.widget.Toolbar>

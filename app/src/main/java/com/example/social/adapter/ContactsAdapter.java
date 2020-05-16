@@ -21,10 +21,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     private Context context;
     private List<Contact> contactList;
     private ContactsClickListener contactsClickListener;
+    //private boolean isOnline;
 
     public ContactsAdapter(Context context, List<Contact> contactList,ContactsClickListener contactsClickListener) {
         this.context = context;
         this.contactList = contactList;
+        //this.isOnline = isOnline;
         this.contactsClickListener = contactsClickListener;
     }
 
@@ -39,12 +41,21 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Contact contact = contactList.get(position);
         holder.textUsername.setText(contact.getUsername());
-        holder.textStatus.setText("Hey there! I am using Social..");
+        holder.textStatus.setText(contact.getDescription());
         if (contact.getImageURL().equals("default")){
             holder.userProfileImage.setImageResource(R.drawable.application_logo_black);
         } else {
             Glide.with(context).load(contact.getImageURL()).into(holder.userProfileImage);
         }
+        /*if (isOnline){
+            if (contact.getStatus().equals("online")){
+                holder.imageUserOnline.setVisibility(View.VISIBLE);
+                holder.imageUserOffline.setVisibility(View.GONE);
+            }else {
+                holder.imageUserOffline.setVisibility(View.VISIBLE);
+                holder.imageUserOnline.setVisibility(View.GONE);
+            }
+        }*/
         holder.itemView.setOnClickListener(v -> contactsClickListener.onContactClick(contactList.get(position)));
     }
 
@@ -57,12 +68,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textUsername,textStatus;
         private ImageView userProfileImage;
-
+        private ImageView imageUserOnline,imageUserOffline;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             textUsername = itemView.findViewById(R.id.textUsernameMsg);
             textStatus = itemView.findViewById(R.id.userStatus);
             userProfileImage = itemView.findViewById(R.id.userProfileImage);
+            //imageUserOnline = itemView.findViewById(R.id.imgUserStatusOnline);
+            //imageUserOffline = itemView.findViewById(R.id.imgUserStatusOffline);
         }
     }
 }

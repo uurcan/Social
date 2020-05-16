@@ -205,7 +205,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        if (getApplicationContext().getSharedPreferences(Constants.AUTH_PERSISTENCE,Context.MODE_PRIVATE).getBoolean(Constants.AUTO_SIGN,false)){
+        if (getApplicationContext().getSharedPreferences(Constants.AUTH_PERSISTENCE,Context.MODE_PRIVATE)
+                .getBoolean(Constants.AUTO_SIGN,false)){
             if (firebaseAuth.getCurrentUser() != null) {
                 startActivity(new Intent(this, MainActivity.class));
             }
