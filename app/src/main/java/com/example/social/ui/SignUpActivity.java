@@ -70,6 +70,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                        hashMap.put("status","offline");
                        hashMap.put("search",userName.toLowerCase());
                        hashMap.put("email",mail);
+                       hashMap.put("description",getString(R.string.description));
 
                        databaseReference.setValue(hashMap).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()){

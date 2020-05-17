@@ -1,5 +1,6 @@
 package com.example.social.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -37,7 +38,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     Bundle bundle;
     FirebaseUser firebaseUser;
     DatabaseReference databaseReference;
-    TextView toolbarUsername;
+    TextView toolbarUsername,toolbarUserStatus;
     ImageView toolbarUserProfile;
     ActivityMessagingBinding activityMessagingBinding;
     MessageAdapter messageAdapter;
@@ -54,9 +55,10 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             getSupportActionBar().setTitle("");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         toolbarUsername = findViewById(R.id.username);
         toolbarUserProfile = findViewById(R.id.profile_image);
+        toolbarUserStatus = findViewById(R.id.status);
         activityMessagingBinding.imgSendMessage.setOnClickListener(this);
         activityMessagingBinding.recyclerMessagingField.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -73,7 +75,11 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Contact contact = dataSnapshot.getValue(Contact.class);
                     if (contact != null) {
+                        toolbarUserProfile.setVisibility(View.VISIBLE);
+                        toolbarUserStatus.setVisibility(View.VISIBLE);
+                        toolbarUsername.setTextSize(15);
                         toolbarUsername.setText(contact.getUsername());
+                        toolbarUserStatus.setText(contact.getStatus());
                         if (contact.getImageURL().equals("default")) {
                             toolbarUserProfile.setImageResource(R.drawable.application_logo_white);
                         } else {
@@ -157,5 +163,23 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
             }
         });
+    }
+    private void setUserStatus(String status){
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("status",status);
+        databaseReference.updateChildren(hashMap);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setUserStatus("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        setUserStatus("offline");
     }
 }

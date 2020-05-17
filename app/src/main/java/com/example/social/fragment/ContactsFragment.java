@@ -47,7 +47,7 @@ public class ContactsFragment extends Fragment implements ContactsClickListener{
         userFragmentBinding.recyclerUserList.setLayoutManager(new LinearLayoutManager(getContext()));
         contactList = new ArrayList<>();
         readUserListData();
-        contactsAdapter = new ContactsAdapter(getContext(),contactList,this);
+        contactsAdapter = new ContactsAdapter(getContext(),contactList,this,false);
         return userFragmentBinding.getRoot();
     }
 

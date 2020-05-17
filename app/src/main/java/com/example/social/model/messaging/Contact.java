@@ -7,14 +7,17 @@ public class Contact {
     private String status;
     private String search;
     private String email;
+    private String description;
+
     public Contact(){}
-    public Contact(String id, String username, String imageURL, String status, String search,String email) {
+    public Contact(String id, String username, String imageURL, String status, String search,String email,String description) {
         this.id = id;
         this.username = username;
         this.imageURL = imageURL;
         this.status = status;
         this.search = search;
         this.email = email;
+        this.description = description;
     }
 
     public String getId() {
@@ -63,5 +66,17 @@ public class Contact {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

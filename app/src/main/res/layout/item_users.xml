@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data class = "ItemUsersBinding"/>
 <RelativeLayout
     android:layout_margin="5dp"
@@ -33,5 +33,42 @@
         android:textColor="#838383"
         android:layout_below="@+id/textUsernameMsg"
         android:layout_toRightOf="@+id/userProfileImage"/>
+    <TextView
+        android:visibility="gone"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Test Example"
+        android:id="@+id/textLastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#838383"
+        android:layout_below="@+id/textUsernameMsg"
+        android:layout_toRightOf="@+id/userProfileImage"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="15dp"
+        app:civ_border_width="10dp"
+        app:civ_border_color="#05df29"
+        android:id="@+id/imgUserStatusOnline"
+        android:visibility="gone"
+        android:layout_below="@id/textUsernameMsg"
+        android:layout_height="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="-15dp"
+        android:layout_toEndOf="@id/userProfileImage"
+        android:layout_toRightOf="@id/userProfileImage"
+        android:src="@mipmap/ic_launcher" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:visibility="gone"
+        android:layout_width="15dp"
+        app:civ_border_width="10dp"
+        app:civ_border_color="#bfbfbf"
+        android:id="@+id/imgUserStatusOffline"
+        android:layout_below="@id/textUsernameMsg"
+        android:layout_height="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="-15dp"
+        android:layout_toEndOf="@id/userProfileImage"
+        android:layout_toRightOf="@id/userProfileImage"
+        android:src="@mipmap/ic_launcher" />
 </RelativeLayout>
 </layout>
