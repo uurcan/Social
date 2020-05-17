@@ -19,6 +19,7 @@ import com.example.social.databinding.FragmentMessageBinding;
 import com.example.social.listener.ContactsClickListener;
 import com.example.social.model.messaging.Contact;
 import com.example.social.ui.MessagingActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +54,7 @@ public class MessageFragment extends Fragment implements ContactsClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         this.fragmentMessageBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_message, container, false);
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (getActivity() != null) {
             MessagingPagerAdapter messagingPagerAdapter = new MessagingPagerAdapter(
                     getActivity().getSupportFragmentManager(), 1
@@ -71,7 +73,8 @@ public class MessageFragment extends Fragment implements ContactsClickListener {
         intent.putExtra(Constants.USER_ID,contact.getId());
         startActivity(intent);
     }
-    /*private void setUserStatus(String status){
+
+    private void setUserStatus(String status){
         databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("status",status);
@@ -88,5 +91,5 @@ public class MessageFragment extends Fragment implements ContactsClickListener {
     public void onPause() {
         super.onPause();
         setUserStatus("offline");
-    }*/
+    }
 }

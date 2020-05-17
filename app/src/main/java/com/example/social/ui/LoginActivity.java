@@ -31,7 +31,10 @@ import com.example.social.R;
 import com.example.social.constants.Constants;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -177,11 +180,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String email = Objects.requireNonNull(edtUsername.getText()).toString();
         String password = Objects.requireNonNull(edtPassword.getText()).toString();
         if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)) {
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    startActivity(new Intent(this,MainActivity.class));
-                } else {
-                    Toast.makeText(LoginActivity.this, "Wrong Credentials !", Toast.LENGTH_SHORT).show();
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        LoginActivity.this.startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Wrong Credentials !", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         } else Toast.makeText(this,"Empty value",Toast.LENGTH_LONG).show();

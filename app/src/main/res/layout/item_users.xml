@@ -33,6 +33,17 @@
         android:textColor="#838383"
         android:layout_below="@+id/textUsernameMsg"
         android:layout_toRightOf="@+id/userProfileImage"/>
+    <TextView
+        android:visibility="gone"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Test Example"
+        android:id="@+id/textLastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#838383"
+        android:layout_below="@+id/textUsernameMsg"
+        android:layout_toRightOf="@+id/userProfileImage"/>
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="15dp"
         app:civ_border_width="10dp"

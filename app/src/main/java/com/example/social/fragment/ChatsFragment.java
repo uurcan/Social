@@ -78,7 +78,7 @@ public class ChatsFragment extends Fragment implements ContactsClickListener {
     private void readFirebaseChats() {
         contactList = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-        contactsAdapter = new ContactsAdapter(getContext(),contactList,this);
+        contactsAdapter = new ContactsAdapter(getContext(),contactList,this,true);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
