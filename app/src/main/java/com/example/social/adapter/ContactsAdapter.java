@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,11 +25,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
+public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>
+                             implements Filterable {
     private Context context;
     private List<Contact> contactList;
+    private List<Contact> contactListFilter;
     private ContactsClickListener contactsClickListener;
     private boolean isOnChatScreen;
     private String lastMessage;
@@ -37,6 +43,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         this.contactList = contactList;
         this.isOnChatScreen = isOnChatScreen;
         this.contactsClickListener = contactsClickListener;
+        this.contactListFilter = new ArrayList<>(contactList);
+        //TODO: contactListFilter is empty..
     }
 
     @NonNull
@@ -113,6 +121,36 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             }
         });
     }
+    private Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Contact> filteredList = new ArrayList<>();
+            if (constraint.toString().isEmpty()){
+                filteredList.addAll(contactListFilter);
+            } else {
+                for (Contact contact: contactListFilter){
+                    if (contact.getUsername().contains(constraint.toString().toLowerCase())){
+                        filteredList.add(contact);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            contactList.clear();
+            contactList.addAll((Collection<? extends Contact>) results.values);
+            notifyDataSetChanged();
+        }
+    };
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textUsername,textStatus,textLastMessage;
         private ImageView userProfileImage;

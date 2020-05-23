@@ -27,7 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.social.ui.MainActivity" />
+        <activity android:name="com.example.social.ui.MainActivity"
+                  android:windowSoftInputMode="adjustPan"/>
         <activity android:name="com.example.social.ui.SignUpActivity" />
         <activity android:name="com.example.social.ui.ForgotPasswordActivity" />
         <activity android:name="com.example.social.ui.FeedDetailsActivity"

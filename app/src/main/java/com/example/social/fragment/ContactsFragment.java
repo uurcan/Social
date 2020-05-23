@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,15 +26,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsFragment extends Fragment implements ContactsClickListener{
+public class ContactsFragment extends Fragment implements ContactsClickListener,
+                                                          SearchView.OnQueryTextListener{
     private ContactsAdapter contactsAdapter;
     private List<Contact> contactList;
     private UserFragmentBinding userFragmentBinding;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,7 @@ public class ContactsFragment extends Fragment implements ContactsClickListener{
         userFragmentBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_users,container,false);
         userFragmentBinding.recyclerUserList.setHasFixedSize(true);
         userFragmentBinding.recyclerUserList.setLayoutManager(new LinearLayoutManager(getContext()));
+        userFragmentBinding.searchViewUsers.setOnQueryTextListener(this);
         contactList = new ArrayList<>();
         readUserListData();
         contactsAdapter = new ContactsAdapter(getContext(),contactList,this,false);
@@ -79,5 +84,16 @@ public class ContactsFragment extends Fragment implements ContactsClickListener{
         Intent intent = new Intent(getActivity(), MessagingActivity.class);
         intent.putExtra(Constants.USER_ID,contact.getId());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        contactsAdapter.getFilter().filter(newText);
+        return false;
     }
 }
