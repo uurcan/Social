@@ -26,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>
@@ -43,8 +42,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         this.contactList = contactList;
         this.isOnChatScreen = isOnChatScreen;
         this.contactsClickListener = contactsClickListener;
-        this.contactListFilter = new ArrayList<>(contactList);
-        //TODO: contactListFilter is empty..
+        this.contactListFilter = contactList;
     }
 
     @NonNull
@@ -56,7 +54,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Contact contact = contactList.get(position);
+        Contact contact = contactListFilter.get(position);
         holder.textUsername.setText(contact.getUsername());
 
         if (contact.getImageURL().equals("default")){
@@ -82,12 +80,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                 holder.imageUserOnline.setVisibility(View.GONE);
             }
         }
-        holder.itemView.setOnClickListener(v -> contactsClickListener.onContactClick(contactList.get(position)));
+        holder.itemView.setOnClickListener(v -> contactsClickListener.onContactClick(contactListFilter.get(position)));
     }
 
     @Override
     public int getItemCount() {
-        return contactList.size();
+        return contactListFilter.size();
     }
 
     private void getLastMessage(String userID,TextView tvLastMessage){
@@ -124,25 +122,26 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     private Filter filter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            List<Contact> filteredList = new ArrayList<>();
+
             if (constraint.toString().isEmpty()){
-                filteredList.addAll(contactListFilter);
+                contactListFilter = contactList;
             } else {
-                for (Contact contact: contactListFilter){
+                List<Contact> filteredList = new ArrayList<>();
+                for (Contact contact: contactList){
                     if (contact.getUsername().contains(constraint.toString().toLowerCase())){
                         filteredList.add(contact);
                     }
                 }
+                contactListFilter = filteredList;
             }
             FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
+            filterResults.values = contactListFilter;
             return filterResults;
         }
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            contactList.clear();
-            contactList.addAll((Collection<? extends Contact>) results.values);
+            contactListFilter = (List<Contact>) results.values;
             notifyDataSetChanged();
         }
     };

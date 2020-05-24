@@ -1,8 +1,13 @@
 package com.example.social.fragment;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -37,6 +42,7 @@ public class ContactsFragment extends Fragment implements ContactsClickListener,
     private ContactsAdapter contactsAdapter;
     private List<Contact> contactList;
     private UserFragmentBinding userFragmentBinding;
+    private SearchView searchView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,14 +53,15 @@ public class ContactsFragment extends Fragment implements ContactsClickListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         userFragmentBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_users,container,false);
+        setHasOptionsMenu(true);
         userFragmentBinding.recyclerUserList.setHasFixedSize(true);
         userFragmentBinding.recyclerUserList.setLayoutManager(new LinearLayoutManager(getContext()));
-        userFragmentBinding.searchViewUsers.setOnQueryTextListener(this);
         contactList = new ArrayList<>();
         readUserListData();
         contactsAdapter = new ContactsAdapter(getContext(),contactList,this,false);
         return userFragmentBinding.getRoot();
     }
+
 
     private void readUserListData() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -95,5 +102,23 @@ public class ContactsFragment extends Fragment implements ContactsClickListener,
     public boolean onQueryTextChange(String newText) {
         contactsAdapter.getFilter().filter(newText);
         return false;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu,menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        item.setVisible(true);
+        if (getActivity() != null) {
+            SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+            if (searchManager != null) {
+                searchView = (SearchView) item.getActionView();
+                if (searchView != null) {
+                    searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+                    searchView.setOnQueryTextListener(this);
+                }
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
