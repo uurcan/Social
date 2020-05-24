@@ -19,11 +19,13 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.social.R;
+import com.example.social.databinding.ProfileEditDialogBinding;
 import com.example.social.databinding.ProfileFragmentBinding;
 import com.example.social.model.messaging.Contact;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -47,6 +49,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
     private StorageTask uploadTask;
+    private BottomSheetDialog bottomSheetDialog;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -61,7 +64,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         this.profileFragmentBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_profile, container, false);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
-        profileFragmentBinding.imageViewProfile.setOnClickListener(this);
+        profileFragmentBinding.layoutUserProfile.setOnClickListener(this);
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -90,8 +93,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.imageViewProfile){
-            openImageFromGallery();
+        switch (v.getId()){
+            case R.id.layout_user_profile:
+                initializeBottomSheetDialog();
+                break;
+            case R.id.layout_view_profile_picture:
+                //todo : view profile picture
+                break;
+            case R.id.layout_upload_profile_picture:
+                openImageFromGallery();
+                break;
+            case R.id.layout_edit_description:
+                //todo: description edit
+                break;
         }
     }
 
@@ -156,6 +170,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             } else {
                 uploadImage();
             }
+        }
+    }
+
+    private void initializeBottomSheetDialog(){
+        if (getContext() != null) {
+           if (bottomSheetDialog == null)
+               bottomSheetDialog = new BottomSheetDialog(getContext());
+            ProfileEditDialogBinding profileEditDialogBinding = DataBindingUtil.
+                    inflate(LayoutInflater.from(getContext()), R.layout.profile_picture_dialog, null, false);
+            profileEditDialogBinding.layoutEditDescription.setOnClickListener(this);
+            profileEditDialogBinding.layoutUploadProfilePicture.setOnClickListener(this);
+            profileEditDialogBinding.layoutViewProfilePicture.setOnClickListener(this);
+            bottomSheetDialog.setContentView(profileEditDialogBinding.getRoot());
+            bottomSheetDialog.show();
         }
     }
 }

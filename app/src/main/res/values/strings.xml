@@ -33,4 +33,8 @@
     <string name="textMessage">Message..</string>
     <string name="description">Let\'s socialize !</string>
     <string name="textSearch">Search</string>
+    <string name="last_seen_at">"Last seen at : "</string>
+    <string name="text_change_profile_picture">Change Profile Picture</string>
+    <string name="text_view_profile_picture">View Profile Picture</string>
+    <string name="text_edit_description">Edit Description</string>
 </resources>

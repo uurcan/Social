@@ -13,12 +13,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.social.App;
 import com.example.social.R;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.ActivityMainBinding;
 import com.example.social.fragment.FeedFragment;
 import com.example.social.fragment.MessageFragment;
 import com.example.social.fragment.ProfileFragment;
+import com.example.social.utils.DateUtils;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity{
     private FeedFragment feedFragment;
     private ProfileFragment profileFragment;
     private MessageFragment messageFragment;
+    private App app = new App();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,4 +105,15 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        app.setUserStatus("online");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        app.setUserStatus(DateUtils.getLocalTime(getApplicationContext()));
+    }
 }

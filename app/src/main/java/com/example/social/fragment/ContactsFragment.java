@@ -31,7 +31,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ public class ContactsFragment extends Fragment implements ContactsClickListener,
     private ContactsAdapter contactsAdapter;
     private List<Contact> contactList;
     private UserFragmentBinding userFragmentBinding;
-    private SearchView searchView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,7 +110,7 @@ public class ContactsFragment extends Fragment implements ContactsClickListener,
         if (getActivity() != null) {
             SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
             if (searchManager != null) {
-                searchView = (SearchView) item.getActionView();
+                SearchView searchView = (SearchView) item.getActionView();
                 if (searchView != null) {
                     searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
                     searchView.setOnQueryTextListener(this);

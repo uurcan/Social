@@ -19,7 +19,6 @@ import java.util.List;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
     private static final int MESSAGE_TYPE_LEFT = 0;
     private static final int MESSAGE_TYPE_RIGHT = 1;
-    private FirebaseUser firebaseUser;
     private List<Messages> messagesList;
     private Context context;
 
@@ -50,9 +49,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return messagesList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textMessage;
-        public ViewHolder(@NonNull View itemView) {
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView textMessage;
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             textMessage = itemView.findViewById(R.id.txtMessage);
         }
@@ -60,11 +59,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (messagesList.get(position).getSender().equals(firebaseUser.getUid())){
-            return MESSAGE_TYPE_RIGHT;
-        }else {
-            return MESSAGE_TYPE_LEFT;
-        }
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            if (messagesList.get(position).getSender().equals(firebaseUser.getUid())) {
+                return MESSAGE_TYPE_RIGHT;
+            } else {
+                return MESSAGE_TYPE_LEFT;
+            }
+        } return 0;
     }
 }
