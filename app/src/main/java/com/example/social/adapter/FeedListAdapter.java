@@ -23,10 +23,9 @@ import com.example.social.databinding.FeedItemBinding;
 import com.example.social.databinding.NetworkItemBinding;
 import com.example.social.listener.OnFeedClickListener;
 import com.example.social.model.feed.Article;
-import com.example.social.utils.DateFormat;
+import com.example.social.utils.DateUtils;
 import com.example.social.utils.NetworkState;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -144,8 +143,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             feedItemBinding.txtFeedAuthor.setText(article.getAuthor() == null || article.getAuthor().isEmpty() ? "Anonymous" : article.getAuthor());
             feedItemBinding.txtFeedSource.setText(article.getSource().getName());
             feedItemBinding.txtFeedTitle.setText(article.getTitle());
-            feedItemBinding.txtFeedTime.setText(DateFormat.formatDate(article.getPublishedAt()));
-            feedItemBinding.txtPublishDate.setText(DateFormat.formatDate(article.getPublishedAt()));
+            feedItemBinding.txtFeedTime.setText(DateUtils.formatDate(article.getPublishedAt()));
+            feedItemBinding.txtPublishDate.setText(DateUtils.formatDate(article.getPublishedAt()));
             feedItemBinding.txtFeedDescription.setText(article.getDescription());
             itemView.setOnClickListener(this);
             Glide.with(context)

@@ -29,7 +29,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
                             || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
                 }
             }
-        }else {
+        } else {
             if (connectivityManager != null) {
                 NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
                 if (activeNetwork != null) {

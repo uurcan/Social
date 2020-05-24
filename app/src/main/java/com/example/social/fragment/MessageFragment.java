@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -19,22 +18,15 @@ import com.example.social.databinding.FragmentMessageBinding;
 import com.example.social.listener.ContactsClickListener;
 import com.example.social.model.messaging.Contact;
 import com.example.social.ui.MessagingActivity;
+import com.example.social.utils.DateUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
-import javax.xml.transform.Transformer;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class MessageFragment extends Fragment implements ContactsClickListener {
-    private FragmentMessageBinding fragmentMessageBinding;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
     public MessageFragment() {
@@ -52,7 +44,7 @@ public class MessageFragment extends Fragment implements ContactsClickListener {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        this.fragmentMessageBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_message, container, false);
+        FragmentMessageBinding fragmentMessageBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_message, container, false);
         databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (getActivity() != null) {
@@ -64,7 +56,7 @@ public class MessageFragment extends Fragment implements ContactsClickListener {
             fragmentMessageBinding.viewPager.setAdapter(messagingPagerAdapter);
             fragmentMessageBinding.tabLayout.setupWithViewPager(fragmentMessageBinding.viewPager);
         }
-        return this.fragmentMessageBinding.getRoot();
+        return fragmentMessageBinding.getRoot();
     }
 
     @Override
@@ -74,22 +66,4 @@ public class MessageFragment extends Fragment implements ContactsClickListener {
         startActivity(intent);
     }
 
-    private void setUserStatus(String status){
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("status",status);
-        databaseReference.updateChildren(hashMap);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setUserStatus("online");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        setUserStatus("offline");
-    }
 }

@@ -23,7 +23,7 @@ import com.example.social.R;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.ActivityDetailsBinding;
 import com.example.social.utils.ApplicationUtils;
-import com.example.social.utils.DateFormat;
+import com.example.social.utils.DateUtils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -61,7 +61,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
 
             activityDetailsBinding.feedTitleToolbar.setText(bundle.getString(Constants.TITLE));
             activityDetailsBinding.feedSubtitleToolbar.setText(feedURL);
-            activityDetailsBinding.feedDetailDatetime.setText(DateFormat.formatDate(bundle.getString(Constants.DATE)));
+            activityDetailsBinding.feedDetailDatetime.setText(DateUtils.formatDate(bundle.getString(Constants.DATE)));
             activityDetailsBinding.feedDetailTitle.setText(feedTitle);
             activityDetailsBinding.feedDetailsTimezone.setText(feedInfo);
             activityDetailsBinding.feedDetailDescription.setText(bundle.getString(Constants.DESCRIPTION));

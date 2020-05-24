@@ -46,16 +46,20 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                 finish();
                 break;
             case R.id.btnResetPassword:
-                firebaseAuth.sendPasswordResetEmail(edtForgotPasswordInput.getText().toString()).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        Toast.makeText(getApplicationContext(),"Password has sent to your email.",Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
+                resetPassword();
                 break;
                 default:
                     break;
         }
+    }
+
+    private void resetPassword() {
+        firebaseAuth.sendPasswordResetEmail(edtForgotPasswordInput.getText().toString()).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                Toast.makeText(getApplicationContext(),"Password has sent to your email.",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), Objects.requireNonNull(task.getException()).getMessage(),Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

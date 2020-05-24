@@ -15,12 +15,14 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
+import com.example.social.App;
 import com.example.social.R;
 import com.example.social.adapter.MessageAdapter;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.ActivityMessagingBinding;
 import com.example.social.model.messaging.Contact;
 import com.example.social.model.messaging.Messages;
+import com.example.social.utils.DateUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,15 +37,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class MessagingActivity extends AppCompatActivity implements View.OnClickListener {
-    Bundle bundle;
-    FirebaseUser firebaseUser;
-    DatabaseReference databaseReference;
-    TextView toolbarUsername,toolbarUserStatus;
-    ImageView toolbarUserProfile;
-    ActivityMessagingBinding activityMessagingBinding;
-    MessageAdapter messageAdapter;
-    List<Messages> messagesList;
-    String userID;
+    private Bundle bundle;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
+    private TextView toolbarUsername,toolbarUserStatus;
+    private ImageView toolbarUserProfile;
+    private ActivityMessagingBinding activityMessagingBinding;
+    private MessageAdapter messageAdapter;
+    private List<Messages> messagesList;
+    private String userID;
+    private App application = new App();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -164,22 +167,16 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
-    private void setUserStatus(String status){
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
-        HashMap<String,Object> hashMap = new HashMap<>();
-        hashMap.put("status",status);
-        databaseReference.updateChildren(hashMap);
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        setUserStatus("online");
+        application.setUserStatus("online");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        setUserStatus("offline");
+        application.setUserStatus(DateUtils.getLocalTime(getApplicationContext()));
     }
 }

@@ -1,15 +1,20 @@
 package com.example.social.utils;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
+import com.example.social.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
-public class DateFormat {
+public class DateUtils {
 
     public static ColorDrawable[] vibrantLightColorList =
             {
@@ -52,5 +57,20 @@ public class DateFormat {
         Locale locale = Locale.getDefault();
         String country = String.valueOf(locale.getLanguage());
         return country.toLowerCase();
+    }
+    public static String getLocalTime(Context context){
+        Date date = new Date();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(date);
+        String mark = "";
+        int hour = calendar.get(Calendar.HOUR);
+        int minute = calendar.get(Calendar.MINUTE);
+        if (calendar.get(Calendar.AM_PM) == Calendar.PM){
+            mark = "PM";
+        } else {
+            mark = "AM";
+        }
+        return context.getString(R.string.last_seen_at) + String.format("%02d",hour)
+                + ":" + String.format("%02d",minute) + " " + mark;
     }
 }
