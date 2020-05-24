@@ -26,13 +26,14 @@
         android:textColor="#333333"
         android:id="@+id/textUsernameMsg"
         android:textSize="@dimen/contact_name"
-        android:layout_height="wrap_content"/>
+        android:layout_height="20dp"/>
     <TextView
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:id="@+id/userStatus"
+        android:text="@string/lorem_ipsum"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:textColor="#838383"
         android:layout_below="@+id/textUsernameMsg"
         android:layout_toRightOf="@+id/userProfileImage"/>
@@ -42,7 +43,7 @@
         android:layout_marginLeft="10dp"
         android:id="@+id/textLastMessage"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:textColor="#838383"
         android:layout_below="@+id/textUsernameMsg"
         android:layout_toRightOf="@+id/userProfileImage"/>
