@@ -1,5 +1,6 @@
 package com.example.social.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.example.social.databinding.ActivityMessagingBinding;
 import com.example.social.model.messaging.Contact;
 import com.example.social.model.messaging.Messages;
 import com.example.social.utils.DateUtils;
+import com.example.social.utils.ImageViewUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -61,6 +63,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
         toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         toolbarUsername = findViewById(R.id.username);
         toolbarUserProfile = findViewById(R.id.profile_image);
+        toolbarUserProfile.setOnClickListener(this);
         toolbarUserStatus = findViewById(R.id.status);
         activityMessagingBinding.imgSendMessage.setOnClickListener(this);
         activityMessagingBinding.recyclerMessagingField.setHasFixedSize(true);
@@ -84,7 +87,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                         toolbarUsername.setText(contact.getUsername());
                         toolbarUserStatus.setText(contact.getStatus());
                         if (contact.getImageURL().equals("default")) {
-                            toolbarUserProfile.setImageResource(R.drawable.application_logo_white);
+                            toolbarUserProfile.setImageResource(R.drawable.default_profile_picture_white);
                         } else {
                             Glide.with(getApplicationContext()).load(contact.getImageURL())
                                     .into(toolbarUserProfile);
@@ -127,8 +130,13 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.imgSendMessage) {
-            sendFirebaseMessage();
+        switch (v.getId()){
+            case R.id.imgSendMessage:
+                sendFirebaseMessage();
+                break;
+            case R.id.profile_image:
+                ImageViewUtils.enablePopUpOnClick(this,toolbarUserProfile);
+                break;
         }
     }
     private void sendFirebaseMessage(){

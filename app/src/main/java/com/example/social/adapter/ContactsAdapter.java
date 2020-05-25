@@ -58,7 +58,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         holder.textUsername.setText(contact.getUsername());
 
         if (contact.getImageURL().equals("default")){
-            holder.userProfileImage.setImageResource(R.drawable.application_logo_black);
+            holder.userProfileImage.setImageResource(R.drawable.default_user);
         } else {
             Glide.with(context).load(contact.getImageURL()).into(holder.userProfileImage);
         }

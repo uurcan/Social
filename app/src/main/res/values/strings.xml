@@ -37,4 +37,7 @@
     <string name="text_change_profile_picture">Change Profile Picture</string>
     <string name="text_view_profile_picture">View Profile Picture</string>
     <string name="text_edit_description">Edit Description</string>
+    <string name="text_remove_profile_picture">Remove Profile Picture</string>
+    <string name="text_your_next_description">Your Description ?</string>
+    <string name="text_ok">OK</string>
 </resources>

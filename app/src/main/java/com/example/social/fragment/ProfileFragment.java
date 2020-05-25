@@ -6,10 +6,12 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,10 +24,12 @@ import com.example.social.R;
 import com.example.social.databinding.ProfileEditDialogBinding;
 import com.example.social.databinding.ProfileFragmentBinding;
 import com.example.social.model.messaging.Contact;
+import com.example.social.utils.ImageViewUtils;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,15 +45,16 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ProfileFragment extends Fragment implements View.OnClickListener{
+public class ProfileFragment extends Fragment implements View.OnClickListener {
+    private static final int IMAGE_REQUEST = 1;
+    private Uri imageUri;
     private ProfileFragmentBinding profileFragmentBinding;
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
-    private static final int IMAGE_REQUEST = 1;
-    private Uri imageUri;
     private StorageTask uploadTask;
     private BottomSheetDialog bottomSheetDialog;
+    private HashMap<String,Object> hashMap = new HashMap<>();
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -75,7 +80,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                         profileFragmentBinding.profileUserName.setText(contact.getUsername());
                         profileFragmentBinding.profileUserDescription.setText(contact.getDescription());
                         if (contact.getImageURL().equals("default"))
-                            profileFragmentBinding.imageViewProfile.setImageResource(R.drawable.application_logo_black);
+                            profileFragmentBinding.imageViewProfile.setImageResource(R.drawable.default_user);
                          else {
                             Glide.with(getContext()).load(contact.getImageURL())
                                     .into(profileFragmentBinding.imageViewProfile);
@@ -98,14 +103,52 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 initializeBottomSheetDialog();
                 break;
             case R.id.layout_view_profile_picture:
-                //todo : view profile picture
+                viewProfilePicture();
                 break;
             case R.id.layout_upload_profile_picture:
                 openImageFromGallery();
                 break;
             case R.id.layout_edit_description:
-                //todo: description edit
+                editUserDescription();
                 break;
+            case R.id.layout_remove_profile_picture:
+                removeProfilePicture();
+                break;
+        }
+    }
+
+    private void viewProfilePicture() {
+        ImageViewUtils.enablePopUpOnClick(getActivity(),profileFragmentBinding.imageViewProfile);
+    }
+
+    private void editUserDescription() {
+        if (getContext() != null) {
+            final EditText editTextUserDescription = new EditText(getContext());
+            editTextUserDescription.setHint(getString(R.string.description));
+            editTextUserDescription.setFilters(new InputFilter[]{new InputFilter.LengthFilter(25)});
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext())
+                    .setTitle(getString(R.string.text_your_next_description))
+                    .setView(editTextUserDescription)
+                    .setPositiveButton(getString(R.string.text_ok), (dialog, which) -> {
+                        if (editTextUserDescription.getText().length() == 0){
+                            Toast.makeText(getContext(),"Empty Value",Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (firebaseUser != null) {
+                                hashMap.put("description", editTextUserDescription.getText().toString());
+                                databaseReference.updateChildren(hashMap);
+                                dialog.dismiss();
+                                bottomSheetDialog.dismiss();
+                        }
+                    }
+                });
+            builder.show();
+        }
+    }
+
+    private void removeProfilePicture() {
+        if (firebaseUser != null) {
+            hashMap.put("imageURL", "default");
+            databaseReference.updateChildren(hashMap);
         }
     }
 
@@ -142,12 +185,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     Uri downloadUri = task.getResult();
                     if (downloadUri != null) {
                         String uriFile = downloadUri.toString();
-                        databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                                .child(firebaseUser.getUid());
-                        HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("imageURL", uriFile);
                         databaseReference.updateChildren(hashMap);
                         dialog.dismiss();
+                        bottomSheetDialog.dismiss();
                     } else {
                         Toast.makeText(getContext(), "Failed !", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
@@ -182,6 +223,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             profileEditDialogBinding.layoutEditDescription.setOnClickListener(this);
             profileEditDialogBinding.layoutUploadProfilePicture.setOnClickListener(this);
             profileEditDialogBinding.layoutViewProfilePicture.setOnClickListener(this);
+            profileEditDialogBinding.layoutRemoveProfilePicture.setOnClickListener(this);
             bottomSheetDialog.setContentView(profileEditDialogBinding.getRoot());
             bottomSheetDialog.show();
         }
