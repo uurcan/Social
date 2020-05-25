@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/layout_edit_description"
+        android:id="@+id/layout_remove_profile_picture"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -15,13 +15,13 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="8dp"
-            android:src="@drawable/edit_description"
+            android:src="@drawable/remove_profile_picture"
             android:tint="#000"/>
         <TextView
             android:textColor="@color/black"
             android:layout_gravity="center_vertical"
             android:padding="8dp"
-            android:text="@string/text_edit_description"
+            android:text="@string/text_remove_profile_picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
@@ -62,6 +62,26 @@
             android:layout_gravity="center_vertical"
             android:padding="8dp"
             android:text="@string/text_change_profile_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layout_edit_description"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:padding="5dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/edit_description"
+            android:tint="#000"/>
+        <TextView
+            android:textColor="@color/black"
+            android:layout_gravity="center_vertical"
+            android:padding="8dp"
+            android:text="@string/text_edit_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
