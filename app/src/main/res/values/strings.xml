@@ -40,4 +40,5 @@
     <string name="text_remove_profile_picture">Remove Profile Picture</string>
     <string name="text_your_next_description">Your Description ?</string>
     <string name="text_ok">OK</string>
+    <string name="text_Typing">typing...</string>
 </resources>
