@@ -68,6 +68,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                        hashMap.put("username",userName);
                        hashMap.put("imageURL","default");
                        hashMap.put("status","offline");
+                       hashMap.put("typingStatus","default");
                        hashMap.put("search",userName.toLowerCase());
                        hashMap.put("email",mail);
                        hashMap.put("description",getString(R.string.description));

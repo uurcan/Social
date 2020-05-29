@@ -3,6 +3,8 @@ package com.example.social.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,6 +51,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     private List<Messages> messagesList;
     private String userID;
     private App application = new App();
+    private HashMap<String,Object> hashMap = new HashMap<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             getSupportActionBar().setTitle("");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        checkEditTextInput();
         toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         toolbarUsername = findViewById(R.id.username);
         toolbarUserProfile = findViewById(R.id.profile_image);
@@ -81,11 +85,18 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Contact contact = dataSnapshot.getValue(Contact.class);
                     if (contact != null) {
+                        String typingStatus = (dataSnapshot.child("typingStatus").getValue()).toString();
                         toolbarUserProfile.setVisibility(View.VISIBLE);
                         toolbarUserStatus.setVisibility(View.VISIBLE);
                         toolbarUsername.setTextSize(15);
                         toolbarUsername.setText(contact.getUsername());
-                        toolbarUserStatus.setText(contact.getStatus());
+
+                        if (typingStatus.equals(userID)){
+                            toolbarUserStatus.setText(R.string.text_Typing);
+                        } else{
+                            toolbarUserStatus.setText(contact.getStatus());
+                        }
+
                         if (contact.getImageURL().equals("default")) {
                             toolbarUserProfile.setImageResource(R.drawable.default_profile_picture_white);
                         } else {
@@ -102,9 +113,30 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             });
         }
     }
+    private void checkEditTextInput(){
+        activityMessagingBinding.edtMessageInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().length() == 0){
+                    checkTypingStatus("default");
+                } else {
+                    checkTypingStatus(userID);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
     private void sendMessage(String sender,String receiver,String message){
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put(Constants.SENDER,sender);
         hashMap.put(Constants.RECEIVER,receiver);
         hashMap.put(Constants.MESSAGE,message);
@@ -149,6 +181,12 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private void checkTypingStatus(String aDefault) {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        hashMap.put("typingStatus",aDefault);
+        databaseReference.updateChildren(hashMap);
+    }
+
     private void readFirebaseMessage(String userID,String companyID){
         messagesList = new ArrayList<>();
         databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -186,5 +224,6 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     public void onPause() {
         super.onPause();
         application.setUserStatus(DateUtils.getLocalTime(getApplicationContext()));
+        checkTypingStatus("default");
     }
 }
