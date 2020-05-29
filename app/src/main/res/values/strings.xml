@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Social</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum est gravida nulla fermentum, fringilla suscipit mauris faucibus. Aliquam lacinia ex at purus lobortis hendrerit.</string>
     <string name="item_title">%s posted %s</string>
@@ -40,5 +40,7 @@
     <string name="text_remove_profile_picture">Remove Profile Picture</string>
     <string name="text_your_next_description">Your Description ?</string>
     <string name="text_ok">OK</string>
-    <string name="text_Typing">typing...</string>
+    <string name="text_Typing" tools:ignore="TypographyEllipsis">typing...</string>
+    <string name="textDelivered">Delivered</string>
+    <string name="textSeen">Seen</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.example.social.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -52,6 +51,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     private String userID;
     private App application = new App();
     private HashMap<String,Object> hashMap = new HashMap<>();
+    private ValueEventListener eventListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,13 +85,13 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Contact contact = dataSnapshot.getValue(Contact.class);
                     if (contact != null) {
-                        String typingStatus = (dataSnapshot.child("typingStatus").getValue()).toString();
+                        String typingStatus = Objects.requireNonNull(dataSnapshot.child("typingStatus").getValue()).toString();
                         toolbarUserProfile.setVisibility(View.VISIBLE);
                         toolbarUserStatus.setVisibility(View.VISIBLE);
                         toolbarUsername.setTextSize(15);
                         toolbarUsername.setText(contact.getUsername());
 
-                        if (typingStatus.equals(userID)){
+                        if (typingStatus.equals(firebaseUser.getUid())){
                             toolbarUserStatus.setText(R.string.text_Typing);
                         } else{
                             toolbarUserStatus.setText(contact.getStatus());
@@ -111,6 +111,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
                 }
             });
+            seenMessage(userID);
         }
     }
     private void checkEditTextInput(){
@@ -140,6 +141,8 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
         hashMap.put(Constants.SENDER,sender);
         hashMap.put(Constants.RECEIVER,receiver);
         hashMap.put(Constants.MESSAGE,message);
+        hashMap.put(Constants.IS_SEEN,false);
+
         databaseReference.child("Chats").push().setValue(hashMap);
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList")
@@ -159,7 +162,27 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
+    private void seenMessage(String userID) {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
+        eventListener = databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    Messages messages = snapshot.getValue(Messages.class);
+                    if (messages != null && messages.getReceiver().equals(firebaseUser.getUid())
+                            && messages.getSender().equals(userID)) {
+                        hashMap.put(Constants.IS_SEEN, true);
+                        snapshot.getRef().updateChildren(hashMap);
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -182,14 +205,14 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void checkTypingStatus(String aDefault) {
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         hashMap.put("typingStatus",aDefault);
         databaseReference.updateChildren(hashMap);
     }
 
     private void readFirebaseMessage(String userID,String companyID){
         messagesList = new ArrayList<>();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -223,6 +246,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onPause() {
         super.onPause();
+        databaseReference.removeEventListener(eventListener);
         application.setUserStatus(DateUtils.getLocalTime(getApplicationContext()));
         checkTypingStatus("default");
     }

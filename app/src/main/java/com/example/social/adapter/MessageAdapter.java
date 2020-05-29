@@ -42,6 +42,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
         Messages message = messagesList.get(position);
         holder.textMessage.setText(String.valueOf(message.getMessage()));
+        if (position == messagesList.size() -1){
+            if (message.isSeen()){
+                holder.txtIsSeen.setText(R.string.textSeen);
+            } else {
+                holder.txtIsSeen.setText(R.string.textDelivered);
+            }
+        }
     }
 
     @Override
@@ -50,10 +57,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textMessage;
+        TextView textMessage,txtIsSeen;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             textMessage = itemView.findViewById(R.id.txtMessage);
+            txtIsSeen = itemView.findViewById(R.id.textIsSeen);
         }
     }
 

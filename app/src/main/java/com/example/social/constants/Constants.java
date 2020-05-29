@@ -15,4 +15,5 @@ public interface Constants {
     String SENDER = "sender";
     String RECEIVER = "receiver";
     String MESSAGE = "message";
+    String IS_SEEN = "isSeen";
 }
