@@ -31,7 +31,7 @@ import com.example.social.listener.ConnectivityReceiverListener;
 import com.example.social.listener.OnFeedClickListener;
 import com.example.social.model.feed.Category;
 import com.example.social.model.feed.CategoryVariables;
-import com.example.social.receivers.ConnectivityReceiver;
+import com.example.social.services.ConnectivityReceiver;
 import com.example.social.ui.FeedDetailsActivity;
 import com.example.social.adapter.FeedListAdapter;
 import com.example.social.constants.Constants;
