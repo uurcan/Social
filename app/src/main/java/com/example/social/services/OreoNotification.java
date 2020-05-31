@@ -18,10 +18,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Objects;
 
 public class OreoNotification extends ContextWrapper {
-    private static final String ID = "id";
+    private static final String ID = "token";
     private static final String NAME = "firebaseApp";
     private NotificationManager notificationManager;
-    private PendingIntent pendingIntent;
 
     public OreoNotification(Context base) {
         super(base);
@@ -46,7 +45,7 @@ public class OreoNotification extends ContextWrapper {
     }
 
     @SuppressLint("NewApi")
-    public Notification.Builder getONotifications(RemoteMessage remoteMessage){
+    public Notification.Builder getONotifications(RemoteMessage remoteMessage,PendingIntent pendingIntent){
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         return new Notification.Builder(getApplicationContext(),ID)

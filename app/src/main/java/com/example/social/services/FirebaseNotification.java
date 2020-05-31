@@ -26,7 +26,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Objects;
 
-public class FirebaseMessagingServiceLocal extends FirebaseMessagingService{
+public class FirebaseNotification extends FirebaseMessagingService{
     private int requestCode,currentCode;
     private PendingIntent pendingIntent;
 
@@ -68,8 +68,9 @@ public class FirebaseMessagingServiceLocal extends FirebaseMessagingService{
     }
 
     private void sendOreoNotification(RemoteMessage remoteMessage){
+        initializeVariables(remoteMessage);
         OreoNotification oreoNotification = new OreoNotification(this);
-        Notification.Builder builder = oreoNotification.getONotifications(remoteMessage);
+        Notification.Builder builder = oreoNotification.getONotifications(remoteMessage,pendingIntent);
         if (requestCode > 0) currentCode = requestCode;
         if (oreoNotification.getManager() != null) {
             oreoNotification.getManager().notify(currentCode,builder.build());

@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity{
                 .addOnCompleteListener(task -> startActivity(new Intent(this,LoginActivity.class))).addOnFailureListener(e ->
                 Toast.makeText(getApplicationContext(),"Fail while logging out..",Toast.LENGTH_LONG).show());
         getApplicationContext().getSharedPreferences(Constants.AUTH_PERSISTENCE, Context.MODE_PRIVATE).edit().clear().apply();
+        app.setUserStatus(DateUtils.getLocalTime(getApplicationContext()));
     }
 
     @Override
@@ -114,6 +115,12 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onPause() {
         super.onPause();
+        app.setUserStatus(DateUtils.getLocalTime(getApplicationContext()));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         app.setUserStatus(DateUtils.getLocalTime(getApplicationContext()));
     }
 }

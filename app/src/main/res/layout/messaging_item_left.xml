@@ -13,6 +13,7 @@
         android:layout_margin="5dp"
         android:layout_height="wrap_content"/>
     <TextView
+        android:visibility="gone"
         android:textColor="@color/grey"
         android:id="@+id/textIsSeen"
         android:layout_marginRight="8dp"

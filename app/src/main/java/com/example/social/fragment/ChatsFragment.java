@@ -74,7 +74,14 @@ public class ChatsFragment extends Fragment implements ContactsClickListener {
 
             }
         });
+        updateToken(FirebaseInstanceId.getInstance().getToken());
         return chatsFragmentBinding.getRoot();
+    }
+
+    private void updateToken(String token) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(firebaseUser.getUid()).setValue(token1);
     }
 
     private void readFirebaseChats() {
@@ -111,10 +118,5 @@ public class ChatsFragment extends Fragment implements ContactsClickListener {
         Intent intent = new Intent(getActivity(), MessagingActivity.class);
         intent.putExtra(Constants.USER_ID,contact.getId());
         startActivity(intent);
-    }
-    private void updateToken(String token){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token1 = new Token(firebaseUser.getUid());
-        reference.child(firebaseUser.getUid()).setValue(token1);
     }
 }

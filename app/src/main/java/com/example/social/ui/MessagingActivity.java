@@ -38,7 +38,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -61,7 +60,6 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     private List<Messages> messagesList;
     private String userID;
     private App application = new App();
-    private HashMap<String,Object> hashMap = new HashMap<>();
     private ValueEventListener eventListener;
     private NotificationService notificationService;
     private boolean isNotified = false;
@@ -111,8 +109,8 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
                 }
             });
-            seenMessage(userID);
         }
+        seenMessage(userID);
     }
     private void checkEditTextInput(){
         activityMessagingBinding.edtMessageInput.addTextChangedListener(new TextWatcher() {
@@ -136,8 +134,9 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
-    private void sendMessage(String sender,String receiver,String message){
+    private void sendMessage(String sender,final String receiver,String message){
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put(Constants.SENDER,sender);
         hashMap.put(Constants.RECEIVER,receiver);
         hashMap.put(Constants.MESSAGE,message);
@@ -145,9 +144,10 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
         databaseReference.child("Chats").push().setValue(hashMap);
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList")
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(firebaseUser.getUid())
                 .child(userID);
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -186,16 +186,14 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
         });
     }
 
-    private void sendNotification(String receiver, String username, String msg) {
+    private void sendNotification(String receiver, final String username,final  String msg) {
         DatabaseReference tokenReference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query = tokenReference.orderByKey().equalTo(receiver);
-        query.addValueEventListener(new ValueEventListener() {
+        tokenReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(firebaseUser.getUid(),R.drawable.application_logo_black,
-                                username + ": " + msg,"New Message",userID);
+                    Data data = new Data(firebaseUser.getUid(),R.drawable.application_logo_black, username + " : " + msg,"New Message",userID);
                     if (token != null) {
                         Sender sender = new Sender(data,token.getToken());
                         notificationService.sendNotification(sender).enqueue(new Callback<Status>() {
@@ -235,6 +233,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                     Messages messages = snapshot.getValue(Messages.class);
                     if (messages != null && messages.getReceiver().equals(firebaseUser.getUid())
                             && messages.getSender().equals(userID)) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put(Constants.IS_SEEN, true);
                         snapshot.getRef().updateChildren(hashMap);
                     }

@@ -35,7 +35,7 @@
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ui.MessagingActivity" />
         <service
-            android:name="com.example.social.services.FirebaseMessagingServiceLocal"
+            android:name="com.example.social.services.FirebaseNotification"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
