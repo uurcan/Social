@@ -21,6 +21,7 @@ import com.example.social.listener.ContactsClickListener;
 import com.example.social.model.messaging.ChatList;
 import com.example.social.model.messaging.Contact;
 
+import com.example.social.model.notification.Token;
 import com.example.social.ui.MessagingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,6 +30,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +74,14 @@ public class ChatsFragment extends Fragment implements ContactsClickListener {
 
             }
         });
-
+        updateToken(FirebaseInstanceId.getInstance().getToken());
         return chatsFragmentBinding.getRoot();
+    }
+
+    private void updateToken(String token) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(firebaseUser.getUid()).setValue(token1);
     }
 
     private void readFirebaseChats() {
@@ -101,6 +110,7 @@ public class ChatsFragment extends Fragment implements ContactsClickListener {
                 //empty method
             }
         });
+
     }
 
     @Override

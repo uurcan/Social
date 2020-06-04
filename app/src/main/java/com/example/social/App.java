@@ -1,7 +1,7 @@
 package com.example.social;
 
 import com.example.social.listener.ConnectivityReceiverListener;
-import com.example.social.receivers.ConnectivityReceiver;
+import com.example.social.services.ConnectivityReceiver;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;

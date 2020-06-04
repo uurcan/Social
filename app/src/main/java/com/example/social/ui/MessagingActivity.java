@@ -24,6 +24,12 @@ import com.example.social.constants.Constants;
 import com.example.social.databinding.ActivityMessagingBinding;
 import com.example.social.model.messaging.Contact;
 import com.example.social.model.messaging.Messages;
+import com.example.social.model.notification.Data;
+import com.example.social.model.notification.Sender;
+import com.example.social.model.notification.Status;
+import com.example.social.model.notification.Token;
+import com.example.social.network.NotificationFactory;
+import com.example.social.network.NotificationService;
 import com.example.social.utils.DateUtils;
 import com.example.social.utils.ImageViewUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +45,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MessagingActivity extends AppCompatActivity implements View.OnClickListener {
     private Bundle bundle;
     private FirebaseUser firebaseUser;
@@ -50,35 +60,23 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     private List<Messages> messagesList;
     private String userID;
     private App application = new App();
-    private HashMap<String,Object> hashMap = new HashMap<>();
     private ValueEventListener eventListener;
+    private NotificationService notificationService;
+    private boolean isNotified = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityMessagingBinding = DataBindingUtil.setContentView(this,R.layout.activity_messaging);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        notificationService = NotificationFactory.getClient("https://fcm.googleapis.com/").create(NotificationService.class);
         checkEditTextInput();
-        toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
-        toolbarUsername = findViewById(R.id.username);
-        toolbarUserProfile = findViewById(R.id.profile_image);
-        toolbarUserProfile.setOnClickListener(this);
-        toolbarUserStatus = findViewById(R.id.status);
-        activityMessagingBinding.imgSendMessage.setOnClickListener(this);
-        activityMessagingBinding.recyclerMessagingField.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-        linearLayoutManager.setStackFromEnd(true);
-        activityMessagingBinding.recyclerMessagingField.setLayoutManager(linearLayoutManager);
+        initializeComponents();
+
         bundle = getIntent().getExtras();
         if (bundle != null) {
             userID = bundle.getString(Constants.USER_ID, "");
             firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                     .child(userID);
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -111,8 +109,8 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
                 }
             });
-            seenMessage(userID);
         }
+        seenMessage(userID);
     }
     private void checkEditTextInput(){
         activityMessagingBinding.edtMessageInput.addTextChangedListener(new TextWatcher() {
@@ -136,8 +134,9 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
-    private void sendMessage(String sender,String receiver,String message){
+    private void sendMessage(String sender,final String receiver,String message){
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put(Constants.SENDER,sender);
         hashMap.put(Constants.RECEIVER,receiver);
         hashMap.put(Constants.MESSAGE,message);
@@ -145,9 +144,10 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
         databaseReference.child("Chats").push().setValue(hashMap);
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList")
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(firebaseUser.getUid())
                 .child(userID);
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -161,7 +161,69 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
             }
         });
+
+        final DatabaseReference chatReference = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(userID)
+                .child(firebaseUser.getUid());
+        chatReference.child("id").setValue(firebaseUser.getUid());
+        final String msg = message;
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Contact contact = dataSnapshot.getValue(Contact.class);
+                if (isNotified){
+                    if (contact != null) {
+                        sendNotification(receiver,contact.getUsername(),msg);
+                    }
+                } isNotified = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
+
+    private void sendNotification(String receiver, final String username,final  String msg) {
+        DatabaseReference tokenReference = FirebaseDatabase.getInstance().getReference("Tokens");
+        tokenReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(firebaseUser.getUid(),R.drawable.application_logo_black, username + " : " + msg,"New Message",userID);
+                    if (token != null) {
+                        Sender sender = new Sender(data,token.getToken());
+                        notificationService.sendNotification(sender).enqueue(new Callback<Status>() {
+                            @Override
+                            public void onResponse(@Nullable Call<Status> call,@Nullable Response<Status> response) {
+                                if (response != null && response.code() == 200) {
+                                    if (response.body() != null) {
+                                        if (response.body().success != 1) {
+                                            Toast.makeText(getApplicationContext(), "Failed to push notification", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@Nullable Call<Status> call,@Nullable Throwable t) {
+                                //empty method
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void seenMessage(String userID) {
         databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
         eventListener = databaseReference.addValueEventListener(new ValueEventListener() {
@@ -171,6 +233,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
                     Messages messages = snapshot.getValue(Messages.class);
                     if (messages != null && messages.getReceiver().equals(firebaseUser.getUid())
                             && messages.getSender().equals(userID)) {
+                        HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put(Constants.IS_SEEN, true);
                         snapshot.getRef().updateChildren(hashMap);
                     }
@@ -197,6 +260,7 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
     private void sendFirebaseMessage(){
         String message = Objects.requireNonNull(activityMessagingBinding.edtMessageInput.getText()).toString();
         if (!message.equals("")){
+            isNotified = true;
             sendMessage(firebaseUser.getUid(),bundle.getString(Constants.USER_ID),message);
             activityMessagingBinding.edtMessageInput.setText("");
         } else {
@@ -206,13 +270,14 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
 
     private void checkTypingStatus(String aDefault) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        HashMap <String,Object> hashMap = new HashMap<>();
         hashMap.put("typingStatus",aDefault);
         databaseReference.updateChildren(hashMap);
     }
 
     private void readFirebaseMessage(String userID,String companyID){
         messagesList = new ArrayList<>();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Chats");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -236,7 +301,24 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
-
+    private void initializeComponents(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
+        toolbarUsername = findViewById(R.id.username);
+        toolbarUserProfile = findViewById(R.id.profile_image);
+        toolbarUserProfile.setOnClickListener(this);
+        toolbarUserStatus = findViewById(R.id.status);
+        activityMessagingBinding.imgSendMessage.setOnClickListener(this);
+        activityMessagingBinding.recyclerMessagingField.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        linearLayoutManager.setStackFromEnd(true);
+        activityMessagingBinding.recyclerMessagingField.setLayoutManager(linearLayoutManager);
+    }
     @Override
     public void onResume() {
         super.onResume();

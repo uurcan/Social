@@ -1,4 +1,4 @@
-package com.example.social.receivers;
+package com.example.social.services;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
