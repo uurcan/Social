@@ -10,11 +10,11 @@
         android:layout_height="wrap_content">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:background="#fff"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:background="#fff"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             tools:listitem="@layout/item_categories"
             android:id="@+id/categories_feed"/>
 

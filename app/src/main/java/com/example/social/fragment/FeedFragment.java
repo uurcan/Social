@@ -83,6 +83,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         List<Category> categories = categoryVariables.getCategories();
         CategoriesAdapter categoriesAdapter = new CategoriesAdapter(categories, getContext());
         categoriesAdapter.setOnItemClickListener(this);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(categoriesAdapter);
     }
 

@@ -1,6 +1,5 @@
 package com.example.social.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,7 +30,6 @@ import com.example.social.model.notification.Token;
 import com.example.social.network.NotificationFactory;
 import com.example.social.network.NotificationService;
 import com.example.social.utils.DateUtils;
-import com.example.social.utils.ImageViewUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -252,9 +250,6 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             case R.id.imgSendMessage:
                 sendFirebaseMessage();
                 break;
-            case R.id.profile_image:
-                ImageViewUtils.enablePopUpOnClick(this,toolbarUserProfile);
-                break;
         }
     }
     private void sendFirebaseMessage(){
@@ -301,14 +296,10 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
+
+
     private void initializeComponents(){
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-        toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
+        initializeToolbar();
         toolbarUsername = findViewById(R.id.username);
         toolbarUserProfile = findViewById(R.id.profile_image);
         toolbarUserProfile.setOnClickListener(this);
@@ -319,10 +310,25 @@ public class MessagingActivity extends AppCompatActivity implements View.OnClick
         linearLayoutManager.setStackFromEnd(true);
         activityMessagingBinding.recyclerMessagingField.setLayoutManager(linearLayoutManager);
     }
+    private void initializeToolbar(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
     @Override
     public void onResume() {
         super.onResume();
         application.setUserStatus("online");
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override
