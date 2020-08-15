@@ -43,4 +43,6 @@
     <string name="text_Typing" tools:ignore="TypographyEllipsis">typing...</string>
     <string name="textDelivered">Delivered</string>
     <string name="textSeen">Seen</string>
+    <string name="save_content">Save Content</string>
+    <string name="delete_content">Delete Content</string>
 </resources>

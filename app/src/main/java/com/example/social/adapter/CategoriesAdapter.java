@@ -1,6 +1,7 @@
 package com.example.social.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     private List<Category> categoryList;
     private Context context;
     private OnFeedClickListener onItemClickListener;
+    private int rowIndex = 0;
+
     public CategoriesAdapter(List<Category> categoryList, Context context) {
         this.categoryList = categoryList;
         this.context = context;
@@ -34,6 +37,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull CategoriesAdapter.ViewHolder holder, int position) {
         holder.textCategory.setText(categoryList.get(position).getName());
+        if (rowIndex == position){
+            holder.textCategory.setBackgroundColor(Color.argb(40, 100, 100, 230));
+        } else {
+            holder.textCategory.setBackgroundColor(Color.argb(0, 0, 0, 0));
+        }
     }
 
     @Override
@@ -56,6 +64,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         @Override
         public void onClick(View v) {
             onItemClickListener.onCategoryClick(categoryList.get(getAdapterPosition()));
+            notifyItemChanged(rowIndex);
+            rowIndex = getAdapterPosition();
+            notifyItemChanged(rowIndex);
         }
     }
 }

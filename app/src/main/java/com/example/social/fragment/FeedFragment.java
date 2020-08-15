@@ -2,9 +2,13 @@ package com.example.social.fragment;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.media.browse.MediaBrowser;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +21,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -39,14 +45,17 @@ import com.example.social.databinding.FragmentFeedBinding;
 import com.example.social.datasource.FeedViewModel;
 import com.example.social.model.feed.Article;
 import com.example.social.model.feed.Specification;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Objects;
 
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
+
 public class FeedFragment extends Fragment implements OnFeedClickListener,
                                                       SwipeRefreshLayout.OnRefreshListener,
                                                       View.OnClickListener,
-                                                      ConnectivityReceiverListener {
+                                                      ConnectivityReceiverListener{
     private FeedListAdapter feedListAdapter;
     private FragmentFeedBinding fragmentFeedBinding;
     private FeedViewModel viewModel;
@@ -56,6 +65,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     public FeedFragment() {
         // Required empty public constructor
     }
+
+
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -74,6 +85,46 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         initializeCategories();
         initializeFeed();
         initializePageDirector();
+        ItemTouchHelper.SimpleCallback itemCallback = new ItemTouchHelper.SimpleCallback(0,  ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                try {
+                    if (direction == ItemTouchHelper.RIGHT) {
+                        Snackbar snackbar = Snackbar.make(viewHolder.itemView, "Feed has been saved to your profile", Snackbar.LENGTH_LONG);
+                        snackbar.setAction(android.R.string.cancel, v -> {
+                        });
+                        snackbar.show();
+                    }
+                }catch(Exception e){
+                    Log.e("Feed Fragment", Objects.requireNonNull(e.getMessage()));
+                }
+                try {
+                    Thread.sleep(300);
+                    feedListAdapter.notifyDataSetChanged();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (getContext() != null) {
+                    new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                            .addSwipeRightBackgroundColor(Color.parseColor("#0B6623"))
+                            .addSwipeRightActionIcon(R.drawable.save_feed_item)
+                            .setSwipeRightLabelColor(Color.WHITE)
+                            .create().decorate();
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemCallback);
+        itemTouchHelper.attachToRecyclerView(fragmentFeedBinding.listFeed);
         return fragmentFeedBinding.getRoot();
     }
 
