@@ -3,6 +3,8 @@ package com.example.social.model.feed;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.Entity;
+
 public class Sources implements Parcelable {
     private String name;
     private Sources(Parcel in) {

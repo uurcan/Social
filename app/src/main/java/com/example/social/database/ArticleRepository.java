@@ -1,4 +1,4 @@
-package com.example.social.network;
+package com.example.social.database;
 
 import android.content.Context;
 
@@ -8,18 +8,26 @@ import androidx.lifecycle.Observer;
 
 import com.example.social.model.feed.Article;
 import com.example.social.model.feed.Specification;
+import com.example.social.network.RestApiFactory;
 
 import java.util.List;
 
 public class ArticleRepository {
+    private final ArticleDao articlesDao;
     private static final Object LOCK = new Object();
     private static ArticleRepository articleRepository;
     private final MutableLiveData<List<Article>> networkLiveData;
     private final RestApiFactory restApiFactory;
 
     private ArticleRepository(Context context){
+        articlesDao = ArticleDatabase.getInstance(context).articleDao();
         restApiFactory = RestApiFactory.getInstance(context);
         networkLiveData = new MutableLiveData<>();
+        networkLiveData.observeForever(articles -> {
+            if (articles != null){
+                articlesDao.insert(articles);
+            }
+        });
     }
     public synchronized static ArticleRepository getInstance(Context context){
         if (articleRepository == null){

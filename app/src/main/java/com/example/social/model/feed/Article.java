@@ -3,16 +3,35 @@ package com.example.social.model.feed;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+
+import com.google.gson.annotations.Expose;
+
+@Entity(tableName = "articles",indices = {@Index(value = "title",unique = true)})
 public class Article implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    @Expose(serialize = false,deserialize = false)
     public int id;
+    @ColumnInfo(name = "author")
     private final String author;
+    @ColumnInfo(name = "title")
     private final String title;
+    @ColumnInfo(name = "description")
     private final String description;
+    @ColumnInfo(name = "url")
     private final String url;
+    @ColumnInfo(name = "publishedAt")
     private final String publishedAt;
+    @ColumnInfo(name = "urlToImage")
     private final String urlToImage;
+    @ColumnInfo(name = "source")
     private final Sources source;
+    @ColumnInfo(name = "content")
     private final String content;
+    @ColumnInfo(name = "category")
     private String category;
     
     public void setCategory(String category) {
