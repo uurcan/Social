@@ -19,7 +19,7 @@ public abstract class ArticleDatabase extends RoomDatabase {
     public static ArticleDatabase getInstance(Context context){
         if (instance == null){
             synchronized (LOCK){
-                instance = Room.databaseBuilder(
+                instance =  Room.databaseBuilder(
                         context.getApplicationContext(),
                         ArticleDatabase.class,
                         DATABASE_NAME).build();

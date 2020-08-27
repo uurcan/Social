@@ -22,6 +22,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.social.R;
 import com.example.social.constants.Constants;
 import com.example.social.databinding.ActivityDetailsBinding;
+import com.example.social.model.feed.Article;
 import com.example.social.utils.ApplicationUtils;
 import com.example.social.utils.DateUtils;
 import com.google.android.material.appbar.AppBarLayout;
@@ -30,9 +31,12 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import java.util.Objects;
 
 public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
+    public static final String PARAM_ARTICLE = "article_params";
     private String feedURL,feedSource,feedTitle;
     private boolean isToolbarHidden;
     private ActivityDetailsBinding activityDetailsBinding;
+    private Article article;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +44,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         initializeToolbar();
         initializeComponents();
         initializeFeedDetails();
-        initializeWebView(feedURL);
+        initializeWebView(article.getUrl());
     }
 
     private void initializeComponents() {
@@ -49,28 +53,28 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
 
     private void initializeFeedDetails(){
         Bundle bundle = getIntent().getExtras();
-        if (bundle != null ){
-            feedURL = bundle.getString(Constants.URL);
-            feedTitle = bundle.getString(Constants.TITLE);
-            feedSource = bundle.getString(Constants.SOURCE);
+        if (bundle != null && bundle.containsKey(PARAM_ARTICLE)){
+            final Article article = bundle.getParcelable(PARAM_ARTICLE);
+            if (article != null){
+                this.article = article;
 
-            String feedAuthor = bundle.getString(Constants.AUTHOR);
-            StringBuilder feedInfo = new StringBuilder().append(feedSource == null ||
-                            feedAuthor == null ? "Anonymous" : feedSource)
-                    .append(" - ").append(ApplicationUtils.getDate(bundle.getString(Constants.DATE)));
+            String feedAuthor = article.getAuthor();
+            StringBuilder feedInfo = new StringBuilder().append(article.getSource() == null ||
+                            feedAuthor == null ? "Anonymous" : article.getSource())
+                    .append(" - ").append(ApplicationUtils.getDate(article.getPublishedAt()));
 
-            activityDetailsBinding.feedTitleToolbar.setText(bundle.getString(Constants.TITLE));
-            activityDetailsBinding.feedSubtitleToolbar.setText(feedURL);
-            activityDetailsBinding.feedDetailDatetime.setText(DateUtils.formatDate(bundle.getString(Constants.DATE)));
-            activityDetailsBinding.feedDetailTitle.setText(feedTitle);
+            activityDetailsBinding.feedTitleToolbar.setText(article.getTitle());
+            activityDetailsBinding.feedSubtitleToolbar.setText(article.getUrl());
+            activityDetailsBinding.feedDetailDatetime.setText(DateUtils.formatDate(article.getPublishedAt()));
+            activityDetailsBinding.feedDetailTitle.setText(article.getTitle());
             activityDetailsBinding.feedDetailsTimezone.setText(feedInfo);
-            activityDetailsBinding.feedDetailDescription.setText(bundle.getString(Constants.DESCRIPTION));
+            activityDetailsBinding.feedDetailDescription.setText(article.getDescription());
             Glide.with(this)
-                    .load(bundle.getString(Constants.IMAGE))
+                    .load(article.getUrlToImage())
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .placeholder(R.drawable.placeholder640)
                     .into(activityDetailsBinding.backDropFeedDetail);
-
+            }
         }
     }
     @SuppressLint("SetJavaScriptEnabled")

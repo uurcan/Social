@@ -1,14 +1,17 @@
 package com.example.social.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.example.social.model.feed.Article;
+import com.example.social.model.feed.SavedArticle;
 import com.example.social.model.feed.Specification;
 import com.example.social.network.RestApiFactory;
+import com.example.social.services.AppExecutor;
 
 import java.util.List;
 
@@ -18,14 +21,21 @@ public class ArticleRepository {
     private static ArticleRepository articleRepository;
     private final MutableLiveData<List<Article>> networkLiveData;
     private final RestApiFactory restApiFactory;
+    private AppExecutor appExecutor;
 
     private ArticleRepository(Context context){
         articlesDao = ArticleDatabase.getInstance(context).articleDao();
         restApiFactory = RestApiFactory.getInstance(context);
         networkLiveData = new MutableLiveData<>();
+        appExecutor = AppExecutor.getInstance();
         networkLiveData.observeForever(articles -> {
             if (articles != null){
-                articlesDao.insert(articles);
+                appExecutor.getDiskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        articlesDao.bulkInsert(articles);
+                    }
+                });
             }
         });
     }
@@ -49,5 +59,22 @@ public class ArticleRepository {
             }
         });
         return networkData;
+    }
+
+    /*public LiveData<List<Article>> getSavedArticles(){
+        return articlesDao.getSavedArticles();
+    }*/
+    public LiveData<Boolean> isSaved(int articleID){
+        return articlesDao.isSavedArticle(articleID);
+    }
+    public void removeSavedArticle(final int articleID){
+        appExecutor.getDiskIO().execute(() -> articlesDao.removeSavedArticle(articleID));
+    }
+    public void saveArticle(final int articleID){
+        appExecutor.getDiskIO().execute(() -> {
+            SavedArticle article = new SavedArticle(articleID);
+            articlesDao.insert(article);
+            System.out.println("Saved in database for reference :  %s " + articleID );
+        });
     }
 }

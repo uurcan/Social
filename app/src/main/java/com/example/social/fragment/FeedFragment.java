@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.media.browse.MediaBrowser;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -33,6 +31,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.social.App;
 import com.example.social.R;
 import com.example.social.adapter.CategoriesAdapter;
+import com.example.social.database.ArticleRepository;
 import com.example.social.listener.ConnectivityReceiverListener;
 import com.example.social.listener.OnFeedClickListener;
 import com.example.social.model.feed.Category;
@@ -60,13 +59,13 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     private FragmentFeedBinding fragmentFeedBinding;
     private FeedViewModel viewModel;
     private Specification specification;
+    private Article article;
     private int pageIndex = 1;
+    private ArticleRepository articleRepository;
 
     public FeedFragment() {
         // Required empty public constructor
     }
-
-
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -85,6 +84,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         initializeCategories();
         initializeFeed();
         initializePageDirector();
+        articleRepository = ArticleRepository.getInstance(getContext().getApplicationContext());
         ItemTouchHelper.SimpleCallback itemCallback = new ItemTouchHelper.SimpleCallback(0,  ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -105,6 +105,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
                 }
                 try {
                     Thread.sleep(300);
+                    articleRepository.saveArticle(article.id);
                     feedListAdapter.notifyDataSetChanged();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -248,13 +249,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     public void onFeedClick(Article article) {
         if (getActivity() != null && getView() != null) {
             Intent intent = new Intent(getContext(), FeedDetailsActivity.class);
-            intent.putExtra(Constants.TITLE, article.getTitle());
-            intent.putExtra(Constants.IMAGE, article.getUrlToImage());
-            intent.putExtra(Constants.DATE, article.getPublishedAt());
-            intent.putExtra(Constants.AUTHOR, article.getAuthor());
-            intent.putExtra(Constants.URL, article.getUrl());
-            intent.putExtra(Constants.DESCRIPTION,article.getDescription());
-            intent.putExtra(Constants.SOURCE, article.getSource().getName());
+            intent.putExtra(FeedDetailsActivity.PARAM_ARTICLE, article);
             final LayoutAnimationController controller =
                     AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_fall_down);
             fragmentFeedBinding.listFeed.setLayoutAnimation(controller);
@@ -277,5 +272,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         } else {
             Toast.makeText(getContext(), "Online !", Toast.LENGTH_SHORT).show();
         }
+    }
+    private void saveArticle(){
+
     }
 }

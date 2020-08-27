@@ -3,17 +3,37 @@ package com.example.social.model.feed;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.room.Entity;
+import androidx.room.ColumnInfo;
 
 public class Sources implements Parcelable {
-    private String name;
-    private Sources(Parcel in) {
-        name = in.readString();
+    @ColumnInfo(name = "id")
+    private final String id;
+    @ColumnInfo(name = "name")
+    private final String name;
+
+    /**
+     * @param id   id of the news source, example <b>cnn</b>
+     * @param name display name of news source, example <b>CNN</b>
+     */
+    public Sources(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
+    public String toString() {
+        return "ArticleSource{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     @Override
@@ -21,10 +41,21 @@ public class Sources implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Sources> CREATOR = new Creator<Sources>() {
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.name);
+    }
+
+    protected Sources(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+    }
+
+    public static final Parcelable.Creator<Sources> CREATOR = new Parcelable.Creator<Sources>() {
         @Override
-        public Sources createFromParcel(Parcel in) {
-            return new Sources(in);
+        public Sources createFromParcel(Parcel source) {
+            return new Sources(source);
         }
 
         @Override
@@ -32,8 +63,4 @@ public class Sources implements Parcelable {
             return new Sources[size];
         }
     };
-
-    public String getName() {
-        return name;
-    }
 }

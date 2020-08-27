@@ -4,11 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
+
+import java.sql.Timestamp;
 
 @Entity(tableName = "articles",indices = {@Index(value = "title",unique = true)})
 public class Article implements Parcelable {
@@ -27,11 +30,12 @@ public class Article implements Parcelable {
     private final String publishedAt;
     @ColumnInfo(name = "urlToImage")
     private final String urlToImage;
-    @ColumnInfo(name = "source")
+    @Embedded(prefix = "source")
     private final Sources source;
     @ColumnInfo(name = "content")
     private final String content;
     @ColumnInfo(name = "category")
+    @Expose(serialize = false,deserialize = false)
     private String category;
     
     public void setCategory(String category) {
@@ -79,7 +83,17 @@ public class Article implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
+    public Article(String author, String title, String description, String url, String publishedAt, String urlToImage, Sources source, String content,String category) {
+        this.author = author;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.publishedAt = publishedAt;
+        this.urlToImage = urlToImage;
+        this.source = source;
+        this.content = content;
+        this.category = category;
+    }
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
@@ -105,6 +119,10 @@ public class Article implements Parcelable {
         this.source = in.readParcelable(Sources.class.getClassLoader());
         this.content = in.readString();
         this.category = in.readString();
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
