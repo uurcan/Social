@@ -2,7 +2,6 @@ package com.example.social.database;
 
 import android.content.Context;
 
-import androidx.core.content.ContextCompat;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -10,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.example.social.model.feed.Article;
 import com.example.social.model.feed.SavedArticle;
 
-@Database(entities = {Article.class,SavedArticle.class}, version = 1,exportSchema = false)
+@Database(entities = {Article.class,SavedArticle.class}, version = 6,exportSchema = false)
 public abstract class ArticleDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
     private static final String DATABASE_NAME = "articles";
@@ -22,10 +21,12 @@ public abstract class ArticleDatabase extends RoomDatabase {
                 instance =  Room.databaseBuilder(
                         context.getApplicationContext(),
                         ArticleDatabase.class,
-                        DATABASE_NAME).build();
+                        DATABASE_NAME).fallbackToDestructiveMigration().build();
             }
         }
         return instance;
     }
     public abstract ArticleDao articleDao();
+    public abstract SavedArticleDao savedArticleDao();
+
 }

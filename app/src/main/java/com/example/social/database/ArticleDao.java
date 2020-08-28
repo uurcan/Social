@@ -15,16 +15,7 @@ import java.util.List;
 @Dao
 interface ArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(SavedArticle article);
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void bulkInsert(List<Article> articles);
-
-   // @Query("SELECT * FROM saved_article order by article_id desc")
-   // LiveData<List<Article>> getSavedArticles();
-
-    @Query("DELETE FROM saved_article where article_id=:articleId")
-    void removeSavedArticle(int articleId);
 
     @Query("SELECT * FROM articles order by id")
     LiveData<List<Article>> getArticles();

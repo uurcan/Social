@@ -26,6 +26,7 @@ import com.example.social.model.feed.Article;
 import com.example.social.utils.DateUtils;
 import com.example.social.utils.NetworkState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -163,7 +164,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         }
                     })
             .transition(DrawableTransitionOptions.withCrossFade())
-            .placeholder(R.drawable.placeholder640)
             .into(feedItemBinding.itemDetailImage);
             ViewCompat.setTransitionName(feedItemBinding.itemDetailImage,article.getUrlToImage());
         }
@@ -173,6 +173,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             int index = this.getAdapterPosition();
             onFeedClickListener.onFeedClick(articles.get(index));
         }
+    }
+    public List<Article> getArticles(){
+        return articles;
     }
 }
 

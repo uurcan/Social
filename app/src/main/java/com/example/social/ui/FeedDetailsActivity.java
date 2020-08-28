@@ -17,14 +17,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.social.R;
-import com.example.social.constants.Constants;
-import com.example.social.databinding.ActivityDetailsBinding;
+import com.example.social.databinding.ActivityFeedDetailsBinding;
 import com.example.social.model.feed.Article;
-import com.example.social.utils.ApplicationUtils;
-import com.example.social.utils.DateUtils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -32,9 +29,8 @@ import java.util.Objects;
 
 public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
     public static final String PARAM_ARTICLE = "article_params";
-    private String feedURL,feedSource,feedTitle;
     private boolean isToolbarHidden;
-    private ActivityDetailsBinding activityDetailsBinding;
+    private ActivityFeedDetailsBinding activityDetailsBinding;
     private Article article;
 
     @Override
@@ -44,7 +40,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         initializeToolbar();
         initializeComponents();
         initializeFeedDetails();
-        initializeWebView(article.getUrl());
+        initializeWebView(article);
     }
 
     private void initializeComponents() {
@@ -57,28 +53,14 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
             final Article article = bundle.getParcelable(PARAM_ARTICLE);
             if (article != null){
                 this.article = article;
-
-            String feedAuthor = article.getAuthor();
-            StringBuilder feedInfo = new StringBuilder().append(article.getSource() == null ||
-                            feedAuthor == null ? "Anonymous" : article.getSource())
-                    .append(" - ").append(ApplicationUtils.getDate(article.getPublishedAt()));
-
-            activityDetailsBinding.feedTitleToolbar.setText(article.getTitle());
-            activityDetailsBinding.feedSubtitleToolbar.setText(article.getUrl());
-            activityDetailsBinding.feedDetailDatetime.setText(DateUtils.formatDate(article.getPublishedAt()));
-            activityDetailsBinding.feedDetailTitle.setText(article.getTitle());
-            activityDetailsBinding.feedDetailsTimezone.setText(feedInfo);
-            activityDetailsBinding.feedDetailDescription.setText(article.getDescription());
-            Glide.with(this)
-                    .load(article.getUrlToImage())
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .placeholder(R.drawable.placeholder640)
-                    .into(activityDetailsBinding.backDropFeedDetail);
+                activityDetailsBinding.setArticle(article);
+                initializeWebView(article);
+                Glide.with(getApplicationContext()).load(article.getUrlToImage()).into(activityDetailsBinding.backDropFeedDetail);
             }
         }
     }
     @SuppressLint("SetJavaScriptEnabled")
-    private void initializeWebView(String feedURL) {
+    private void initializeWebView(Article article) {
         WebView webView = findViewById(R.id.feed_detail_web_view);
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -87,7 +69,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        webView.loadUrl(feedURL);
+        webView.loadUrl(article.getUrl());
     }
     private void initializeToolbar(){
         Toolbar toolbar = findViewById(R.id.feed_detail_toolbar);
@@ -138,15 +120,15 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         switch (id){
             case R.id.view_web:
                 intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(feedURL));
+                intent.setData(Uri.parse(article.getUrl()));
                 startActivity(intent);
                 break;
             case R.id.share:
                 try {
                     intent = new Intent(Intent.ACTION_SEND);
                     intent.setType(getString(R.string.textPlan));
-                    intent.putExtra(Intent.EXTRA_SUBJECT,feedSource);
-                    String body = feedTitle + " " + feedURL;
+                    intent.putExtra(Intent.EXTRA_SUBJECT,article.getSource());
+                    String body = article.getTitle() + " " + article.getUrl();
                     intent.putExtra(Intent.EXTRA_TEXT,body);
                     startActivity(Intent.createChooser(intent,getString(R.string.textShareWith)));
                     break;

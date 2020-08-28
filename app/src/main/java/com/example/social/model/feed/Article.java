@@ -11,12 +11,11 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 
-import java.sql.Timestamp;
 
-@Entity(tableName = "articles",indices = {@Index(value = "title",unique = true)})
+@Entity(tableName = "articles", indices = {@Index(value = "title", unique = true)})
 public class Article implements Parcelable {
     @PrimaryKey(autoGenerate = true)
-    @Expose(serialize = false,deserialize = false)
+    @Expose(serialize = false, deserialize = false)
     public int id;
     @ColumnInfo(name = "author")
     private final String author;
@@ -26,18 +25,33 @@ public class Article implements Parcelable {
     private final String description;
     @ColumnInfo(name = "url")
     private final String url;
-    @ColumnInfo(name = "publishedAt")
+    @ColumnInfo(name = "published_at")
     private final String publishedAt;
-    @ColumnInfo(name = "urlToImage")
+    @ColumnInfo(name = "image_url")
     private final String urlToImage;
-    @Embedded(prefix = "source")
+    @Embedded(prefix = "source_")
     private final Sources source;
     @ColumnInfo(name = "content")
     private final String content;
     @ColumnInfo(name = "category")
-    @Expose(serialize = false,deserialize = false)
+    @Expose(serialize = false, deserialize = false)
     private String category;
-    
+
+    public Article(String author, String title, String description, String url, String publishedAt, String urlToImage, Sources source, String content) {
+        this.author = author;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.publishedAt = publishedAt;
+        this.urlToImage = urlToImage;
+        this.source = source;
+        this.content = content;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
     public void setCategory(String category) {
         this.category = category;
     }
@@ -78,22 +92,27 @@ public class Article implements Parcelable {
         return content;
     }
 
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", url='" + url + '\'' +
+                ", publishedAt=" + publishedAt +
+                ", urlToImage='" + urlToImage + '\'' +
+                ", source=" + source +
+                ", content='" + content + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
 
     @Override
     public int describeContents() {
         return 0;
     }
-    public Article(String author, String title, String description, String url, String publishedAt, String urlToImage, Sources source, String content,String category) {
-        this.author = author;
-        this.title = title;
-        this.description = description;
-        this.url = url;
-        this.publishedAt = publishedAt;
-        this.urlToImage = urlToImage;
-        this.source = source;
-        this.content = content;
-        this.category = category;
-    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
@@ -114,15 +133,11 @@ public class Article implements Parcelable {
         this.title = in.readString();
         this.description = in.readString();
         this.url = in.readString();
-        this.publishedAt = in.readString();
+        this.publishedAt = (String) in.readSerializable();
         this.urlToImage = in.readString();
         this.source = in.readParcelable(Sources.class.getClassLoader());
         this.content = in.readString();
         this.category = in.readString();
-    }
-
-    public String getCategory() {
-        return category;
     }
 
     public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {

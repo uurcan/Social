@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,6 +65,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     private int pageIndex = 1;
     private ArticleRepository articleRepository;
 
+
     public FeedFragment() {
         // Required empty public constructor
     }
@@ -96,8 +99,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
                 try {
                     if (direction == ItemTouchHelper.RIGHT) {
                         Snackbar snackbar = Snackbar.make(viewHolder.itemView, "Feed has been saved to your profile", Snackbar.LENGTH_LONG);
-                        snackbar.setAction(android.R.string.cancel, v -> {
-                        });
+                        snackbar.setAction(android.R.string.cancel, v -> {});
                         snackbar.show();
                     }
                 }catch(Exception e){
@@ -105,6 +107,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
                 }
                 try {
                     Thread.sleep(300);
+                    final int position = viewHolder.getAdapterPosition();
+                    final Article article = feedListAdapter.getArticles().get(position);
                     articleRepository.saveArticle(article.id);
                     feedListAdapter.notifyDataSetChanged();
                 } catch (InterruptedException e) {
@@ -157,8 +161,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         final IntentFilter intentFilter = new IntentFilter();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             intentFilter.addAction(ConnectivityManager.EXTRA_CAPTIVE_PORTAL);
-            ConnectivityReceiver receiver = new ConnectivityReceiver();
-            Objects.requireNonNull(getContext()).registerReceiver(receiver, intentFilter);
+            //ConnectivityReceiver receiver = new ConnectivityReceiver();
+            //Objects.requireNonNull(getContext()).registerReceiver(receiver, intentFilter);
             App.getInstance().setConnectivityListener(this);
         }
     }
@@ -182,9 +186,12 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     private void initializeLiveData(){
         fragmentFeedBinding.listFeed.smoothScrollToPosition(0);
         fragmentFeedBinding.swipeRefreshFeed.setRefreshing(true);
-        viewModel.getPagedListLiveData(specification).observe(this, articles -> {
-            if (articles != null){
-                feedListAdapter.setArticles(articles);
+        viewModel.getPagedListLiveData(specification).observe(this, new Observer<List<Article>>() {
+            @Override
+            public void onChanged(List<Article> articles) {
+                if (articles != null) {
+                    feedListAdapter.setArticles(articles);
+                }
             }
         });
         fragmentFeedBinding.swipeRefreshFeed.setRefreshing(false);
@@ -272,8 +279,5 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         } else {
             Toast.makeText(getContext(), "Online !", Toast.LENGTH_SHORT).show();
         }
-    }
-    private void saveArticle(){
-
     }
 }

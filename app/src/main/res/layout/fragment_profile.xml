@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data class="ProfileFragmentBinding"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/layout_user_profile"
         android:orientation="horizontal"
@@ -34,5 +39,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         </LinearLayout>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/saved_article_recycler"
+        tools:listitem="@layout/item_feed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     </LinearLayout>
 </layout>

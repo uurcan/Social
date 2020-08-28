@@ -1,7 +1,6 @@
 package com.example.social.database;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -19,12 +18,14 @@ public class ArticleRepository {
     private final ArticleDao articlesDao;
     private static final Object LOCK = new Object();
     private static ArticleRepository articleRepository;
+    private final SavedArticleDao savedArticleDao;
     private final MutableLiveData<List<Article>> networkLiveData;
     private final RestApiFactory restApiFactory;
     private AppExecutor appExecutor;
 
     private ArticleRepository(Context context){
         articlesDao = ArticleDatabase.getInstance(context).articleDao();
+        savedArticleDao =ArticleDatabase.getInstance(context).savedArticleDao();
         restApiFactory = RestApiFactory.getInstance(context);
         networkLiveData = new MutableLiveData<>();
         appExecutor = AppExecutor.getInstance();
@@ -61,19 +62,19 @@ public class ArticleRepository {
         return networkData;
     }
 
-    /*public LiveData<List<Article>> getSavedArticles(){
-        return articlesDao.getSavedArticles();
-    }*/
+    public LiveData<List<Article>> getSavedArticles(){
+        return savedArticleDao.getAllSaved();
+    }
     public LiveData<Boolean> isSaved(int articleID){
         return articlesDao.isSavedArticle(articleID);
     }
     public void removeSavedArticle(final int articleID){
-        appExecutor.getDiskIO().execute(() -> articlesDao.removeSavedArticle(articleID));
+        appExecutor.getDiskIO().execute(() -> savedArticleDao.removeSaved(articleID));
     }
     public void saveArticle(final int articleID){
         appExecutor.getDiskIO().execute(() -> {
             SavedArticle article = new SavedArticle(articleID);
-            articlesDao.insert(article);
+            savedArticleDao.insert(article);
             System.out.println("Saved in database for reference :  %s " + articleID );
         });
     }
