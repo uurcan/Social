@@ -36,4 +36,8 @@ public class FeedViewModel extends AndroidViewModel {
     public LiveData<List<Article>> getPagedListLiveData(Specification specification) {
         return articleRepository.getArticles(specification);
     }
+
+    public LiveData<List<Article>> getAllSaved() {
+        return articleRepository.getSavedArticles();
+    }
 }

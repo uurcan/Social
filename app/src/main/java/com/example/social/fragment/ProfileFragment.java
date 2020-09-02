@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +19,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.example.social.R;
+import com.example.social.adapter.FeedListAdapter;
+import com.example.social.database.ArticleRepository;
 import com.example.social.databinding.ProfileEditDialogBinding;
 import com.example.social.databinding.ProfileFragmentBinding;
+import com.example.social.datasource.FeedViewModel;
+import com.example.social.model.feed.Article;
 import com.example.social.model.messaging.Contact;
 import com.example.social.utils.ImageViewUtils;
 import com.google.android.gms.tasks.Continuation;
@@ -43,6 +51,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
@@ -55,6 +64,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private StorageTask uploadTask;
     private BottomSheetDialog bottomSheetDialog;
     private HashMap<String,Object> hashMap = new HashMap<>();
+    private ArticleRepository articleRepository;
+    private final FeedListAdapter newsAdapter = new FeedListAdapter(null,getContext());
+    private Parcelable feedListState;
+    public static final String PARAM_LIST_STATE = "param-state";
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -64,6 +77,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         return new ProfileFragment();
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null){
+            feedListState = savedInstanceState.getParcelable(PARAM_LIST_STATE);
+        }
+        FeedViewModel viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+        viewModel.getAllSaved().observeForever(new Observer<List<Article>>() {
+            @Override
+            public void onChanged(@Nullable List<Article> articles) {
+                if (articles != null) {
+                    newsAdapter.setArticles(articles);
+                    restoreRecyclerViewState();
+                } else {
+                    newsAdapter.notifyDataSetChanged();
+                    restoreRecyclerViewState();
+                }
+            }
+        });
+    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         this.profileFragmentBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_profile, container, false);
@@ -214,6 +247,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (profileFragmentBinding.savedArticleRecycler.getLayoutManager() != null){
+            feedListState = profileFragmentBinding.savedArticleRecycler.getLayoutManager().onSaveInstanceState();
+            outState.putParcelable(PARAM_LIST_STATE,feedListState);
+        }
+    }
+
     private void initializeBottomSheetDialog(){
         if (getContext() != null) {
            if (bottomSheetDialog == null)
@@ -226,6 +268,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             profileEditDialogBinding.layoutRemoveProfilePicture.setOnClickListener(this);
             bottomSheetDialog.setContentView(profileEditDialogBinding.getRoot());
             bottomSheetDialog.show();
+        }
+    }
+    private void restoreRecyclerViewState() {
+        if (profileFragmentBinding.savedArticleRecycler.getLayoutManager() != null) {
+            profileFragmentBinding.savedArticleRecycler.getLayoutManager().onRestoreInstanceState(feedListState);
         }
     }
 }

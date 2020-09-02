@@ -1,5 +1,6 @@
 package com.example.social.database;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -14,15 +15,11 @@ import java.util.List;
 @Dao
 interface ArticleDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(List<Article> article);
-
-    @Query("SELECT * FROM saved_article order by article_id desc")
-    LiveData<List<Article>> getSavedArticles();
-
-    @Query("DELETE FROM saved_article where article_id=:articleId")
-    void removeSavedArticle(int articleId);
+    void bulkInsert(List<Article> articles);
 
     @Query("SELECT * FROM articles order by id")
     LiveData<List<Article>> getArticles();
 
+    @Query("SELECT COUNT(article_id) > 0 FROM SAVED_ARTICLE where article_id = :articleID")
+    LiveData<Boolean> isSavedArticle(int articleID);
 }
