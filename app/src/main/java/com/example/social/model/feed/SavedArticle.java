@@ -6,25 +6,37 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.sql.Timestamp;
 
-@Entity(foreignKeys =  @ForeignKey(
+
+@Entity(foreignKeys = @ForeignKey(
         entity = Article.class,
         parentColumns = "id",
-        childColumns = "article_id"),
-        indices = {@Index(value = "article_id",unique = true)},
-        tableName = "saved_article"
+        childColumns = "news_id"),
+        indices = {@Index(value = "news_id", unique = true)},
+        tableName = "saved"
 )
 public class SavedArticle {
+    @ColumnInfo(name = "news_id")
+    private final int newsId;
     @PrimaryKey
-    @ColumnInfo(name = "article_id")
-    private final int articleID;
+    @ColumnInfo(name = "time_saved")
+    private Timestamp timestamp;
 
-    public SavedArticle(int articleID){
-        this.articleID = articleID;
+    public SavedArticle(int newsId) {
+        this.timestamp = new Timestamp(System.currentTimeMillis());
+        this.newsId = newsId;
     }
 
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
 
-    public int getArticleID() {
-        return articleID;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getNewsId() {
+        return newsId;
     }
 }

@@ -11,6 +11,8 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 
+import java.sql.Timestamp;
+
 
 @Entity(tableName = "articles", indices = {@Index(value = "title", unique = true)})
 public class Article implements Parcelable {
@@ -36,6 +38,9 @@ public class Article implements Parcelable {
     @ColumnInfo(name = "category")
     @Expose(serialize = false, deserialize = false)
     private String category;
+    @ColumnInfo(name = "save_date")
+    @Expose(serialize = false, deserialize = false)
+    private Timestamp saveDate = new Timestamp(System.currentTimeMillis());
 
     public Article(String author, String title, String description, String url, String publishedAt, String urlToImage, Sources source, String content) {
         this.author = author;
@@ -92,6 +97,14 @@ public class Article implements Parcelable {
         return content;
     }
 
+    public Timestamp getSaveDate() {
+        return saveDate;
+    }
+
+    public void setSaveDate(Timestamp saveDate) {
+        this.saveDate = saveDate;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -105,6 +118,7 @@ public class Article implements Parcelable {
                 ", source=" + source +
                 ", content='" + content + '\'' +
                 ", category='" + category + '\'' +
+                ", saveDate=" + saveDate +
                 '}';
     }
 
@@ -138,6 +152,7 @@ public class Article implements Parcelable {
         this.source = in.readParcelable(Sources.class.getClassLoader());
         this.content = in.readString();
         this.category = in.readString();
+        this.saveDate = (Timestamp) in.readSerializable();
     }
 
     public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {

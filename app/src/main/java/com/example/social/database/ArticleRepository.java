@@ -66,7 +66,7 @@ public class ArticleRepository {
         return savedArticleDao.getAllSaved();
     }
     public LiveData<Boolean> isSaved(int articleID){
-        return articlesDao.isSavedArticle(articleID);
+        return savedArticleDao.isFavourite(articleID);
     }
     public void removeSavedArticle(final int articleID){
         appExecutor.getDiskIO().execute(() -> savedArticleDao.removeSaved(articleID));
