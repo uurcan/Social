@@ -16,13 +16,14 @@ public interface SavedArticleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(SavedArticle article);
 
-    @Query("SELECT COUNT(article_id) > 0 FROM saved_article WHERE article_id = :articleId")
+    @Query("SELECT COUNT(news_id) > 0 FROM saved WHERE news_id = :articleId")
     LiveData<Boolean> isFavourite(int articleId);
 
-    @Query("DELETE FROM saved_article WHERE article_id=:articleId")
+    @Query("DELETE FROM saved WHERE news_id=:articleId")
     void removeSaved(int articleId);
 
-    @Query("SELECT articles.* FROM articles, saved_article " +
-            "WHERE articles.id == saved_article.article_id " )
+    @Query("SELECT articles.* FROM articles, saved " +
+            "WHERE articles.id == saved.news_id " +
+            "ORDER BY saved.time_saved")
     LiveData<List<Article>> getAllSaved();
 }

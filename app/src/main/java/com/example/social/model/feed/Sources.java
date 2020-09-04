@@ -11,10 +11,6 @@ public class Sources implements Parcelable {
     @ColumnInfo(name = "name")
     private final String name;
 
-    /**
-     * @param id   id of the news source, example <b>cnn</b>
-     * @param name display name of news source, example <b>CNN</b>
-     */
     public Sources(String id, String name) {
         this.id = id;
         this.name = name;
