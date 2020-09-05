@@ -19,18 +19,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.social.R;
 import com.example.social.adapter.FeedListAdapter;
-import com.example.social.database.ArticleRepository;
+import com.example.social.adapter.SavedFeedAdapter;
 import com.example.social.databinding.ProfileEditDialogBinding;
 import com.example.social.databinding.ProfileFragmentBinding;
 import com.example.social.datasource.FeedViewModel;
-import com.example.social.model.feed.Article;
 import com.example.social.model.messaging.Contact;
 import com.example.social.utils.ImageViewUtils;
 import com.google.android.gms.tasks.Continuation;
@@ -51,10 +52,12 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
+import timber.log.Timber;
+
 public class ProfileFragment extends Fragment implements View.OnClickListener {
+    private static final String PARAM_LIST_STATE = "param-state";
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
     private ProfileFragmentBinding profileFragmentBinding;
@@ -64,10 +67,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private StorageTask uploadTask;
     private BottomSheetDialog bottomSheetDialog;
     private HashMap<String,Object> hashMap = new HashMap<>();
-    private ArticleRepository articleRepository;
-    private final FeedListAdapter newsAdapter = new FeedListAdapter(null,getContext());
     private Parcelable feedListState;
-    public static final String PARAM_LIST_STATE = "param-state";
+    private final SavedFeedAdapter savedFeedAdapter = new SavedFeedAdapter();
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -78,25 +79,30 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null){
             feedListState = savedInstanceState.getParcelable(PARAM_LIST_STATE);
         }
-        FeedViewModel viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
-        viewModel.getAllSaved().observeForever(new Observer<List<Article>>() {
-            @Override
-            public void onChanged(@Nullable List<Article> articles) {
-                if (articles != null) {
-                    newsAdapter.setArticles(articles);
-                    restoreRecyclerViewState();
-                } else {
-                    newsAdapter.notifyDataSetChanged();
-                    restoreRecyclerViewState();
-                }
+        /*FeedViewModel viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+        viewModel.getAllSaved().observeForever(articles -> {
+            if (articles != null) {
+                newsAdapter.setArticles(articles);
+                restoreRecyclerViewState();
+                Timber.d("Article fetch success ;)");
+            } else {
+                newsAdapter.notifyDataSetChanged();
+                restoreRecyclerViewState();
+                Timber.d("Article fetch failed ;(");
             }
-        });
+        });*/
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         this.profileFragmentBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_profile, container, false);
@@ -126,6 +132,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 //empty method
             }
         });
+        /*RecyclerView recyclerView = profileFragmentBinding.savedArticleRecycler;
+        recyclerView.setAdapter(newsAdapter);
+        if (getContext() != null){
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL);
+            itemDecoration.setDrawable(getResources().getDrawable(R.drawable.recycler_view_drawable));
+            recyclerView.addItemDecoration(itemDecoration);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }*/
+
+        RecyclerView recyclerView = profileFragmentBinding.savedArticleRecycler;
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        //recyclerView.setAdapter(adapter);
+        //todo: grid layout for saved news item.
         return this.profileFragmentBinding.getRoot();
     }
 
@@ -171,9 +190,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                                 databaseReference.updateChildren(hashMap);
                                 dialog.dismiss();
                                 bottomSheetDialog.dismiss();
+                            }
                         }
-                    }
-                });
+                    });
             builder.show();
         }
     }

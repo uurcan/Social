@@ -18,4 +18,6 @@ interface ArticleDao {
     @Query("SELECT * FROM articles")
     LiveData<List<Article>> getArticles();
 
+    @Query("SELECT * FROM articles WHERE category=:category ORDER BY published_at DESC")
+    LiveData<List<Article>> getArticleByCategory(String category);
 }

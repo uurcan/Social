@@ -13,7 +13,7 @@ public class AppExecutor {
     private final Executor diskIO;
     private final Executor mainThread;
 
-    public AppExecutor(Executor diskIO, Executor mainThread) {
+    private AppExecutor(Executor diskIO, Executor mainThread) {
         this.diskIO = diskIO;
         this.mainThread = mainThread;
     }
@@ -34,6 +34,7 @@ public class AppExecutor {
     public Executor getMainThread() {
         return mainThread;
     }
+
     private static class MainThreadExecutor implements Executor{
         private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
         @Override
