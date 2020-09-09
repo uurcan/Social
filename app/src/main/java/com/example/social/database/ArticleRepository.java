@@ -66,6 +66,7 @@ public class ArticleRepository {
     public LiveData<List<Article>> getSavedArticles(){
         return savedArticleDao.getAllSaved();
     }
+
     public LiveData<Boolean> isSaved(int articleID){
         return savedArticleDao.isFavourite(articleID);
     }

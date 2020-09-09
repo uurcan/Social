@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,19 +22,18 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.social.R;
-import com.example.social.adapter.FeedListAdapter;
 import com.example.social.adapter.SavedFeedAdapter;
 import com.example.social.databinding.ProfileEditDialogBinding;
 import com.example.social.databinding.ProfileFragmentBinding;
 import com.example.social.datasource.FeedViewModel;
 import com.example.social.model.messaging.Contact;
 import com.example.social.utils.ImageViewUtils;
+import com.example.social.utils.SpannedGridLayoutManager;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -54,8 +54,6 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Objects;
 
-import timber.log.Timber;
-
 public class ProfileFragment extends Fragment implements View.OnClickListener {
     private static final String PARAM_LIST_STATE = "param-state";
     private static final int IMAGE_REQUEST = 1;
@@ -68,7 +66,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private BottomSheetDialog bottomSheetDialog;
     private HashMap<String,Object> hashMap = new HashMap<>();
     private Parcelable feedListState;
-    private final SavedFeedAdapter savedFeedAdapter = new SavedFeedAdapter();
+    private SavedFeedAdapter savedFeedAdapter;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -86,21 +84,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             feedListState = savedInstanceState.getParcelable(PARAM_LIST_STATE);
         }
-        /*FeedViewModel viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+        FeedViewModel viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
         viewModel.getAllSaved().observeForever(articles -> {
             if (articles != null) {
-                newsAdapter.setArticles(articles);
+                savedFeedAdapter.setArticles(articles);
                 restoreRecyclerViewState();
-                Timber.d("Article fetch success ;)");
             } else {
-                newsAdapter.notifyDataSetChanged();
+                savedFeedAdapter.notifyDataSetChanged();
                 restoreRecyclerViewState();
-                Timber.d("Article fetch failed ;(");
             }
-        });*/
+        });
     }
 
     @Override
@@ -110,6 +106,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         profileFragmentBinding.layoutUserProfile.setOnClickListener(this);
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
+        savedFeedAdapter = new SavedFeedAdapter(getContext(),null);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -123,7 +120,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                          else {
                             Glide.with(getContext()).load(contact.getImageURL())
                                     .into(profileFragmentBinding.imageViewProfile);
-                                }
+                            }
                         }
                     }
                 }
@@ -132,19 +129,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 //empty method
             }
         });
-        /*RecyclerView recyclerView = profileFragmentBinding.savedArticleRecycler;
-        recyclerView.setAdapter(newsAdapter);
-        if (getContext() != null){
-            DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL);
-            itemDecoration.setDrawable(getResources().getDrawable(R.drawable.recycler_view_drawable));
-            recyclerView.addItemDecoration(itemDecoration);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        }*/
-
-        RecyclerView recyclerView = profileFragmentBinding.savedArticleRecycler;
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        //recyclerView.setAdapter(adapter);
-        //todo: grid layout for saved news item.
+        initializeSpannedRecyclerView();
         return this.profileFragmentBinding.getRoot();
     }
 
@@ -196,7 +181,27 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             builder.show();
         }
     }
-
+    private void initializeSpannedRecyclerView(){
+        SpannedGridLayoutManager manager = new SpannedGridLayoutManager(
+                position -> {
+                    if (position % 6 == 0 || position % 6 == 4) {
+                        return new SpannedGridLayoutManager.SpanInfo(2, 2);
+                    } else {
+                        return new SpannedGridLayoutManager.SpanInfo(1, 1);
+                    }
+                },
+                3, // number of columns
+                1f // how big is default item
+        );
+        RecyclerView recyclerView = profileFragmentBinding.savedArticleRecycler;
+        recyclerView.setAdapter(savedFeedAdapter);
+        if (getContext() != null){
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL);
+            itemDecoration.setDrawable(getResources().getDrawable(R.drawable.recycler_view_drawable));
+            recyclerView.setLayoutManager(manager);
+            recyclerView.addItemDecoration(itemDecoration);
+        }
+    }
     private void removeProfilePicture() {
         if (firebaseUser != null) {
             hashMap.put("imageURL", "default");

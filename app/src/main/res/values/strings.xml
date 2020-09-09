@@ -45,4 +45,5 @@
     <string name="textSeen">Seen</string>
     <string name="save_content">Save Content</string>
     <string name="delete_content">Delete Content</string>
+    <string name="saved_articles">Saved Articles</string>
 </resources>
