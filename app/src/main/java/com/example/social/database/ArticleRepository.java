@@ -15,21 +15,22 @@ import com.example.social.services.AppExecutor;
 import java.util.List;
 
 public class ArticleRepository {
-    private final ArticleDao articlesDao;
     private static final Object LOCK = new Object();
     private static ArticleRepository articleRepository;
-    private final SavedArticleDao savedArticleDao;
-    private final MutableLiveData<List<Article>> networkLiveData;
+
     private final RestApiFactory restApiFactory;
-    private AppExecutor appExecutor;
+    private final ArticleDao articlesDao;
+    private final SavedArticleDao savedArticleDao;
+    private final MutableLiveData<List<Article>> articleLiveData;
+    private final AppExecutor appExecutor;
 
     private ArticleRepository(Context context){
         articlesDao = ArticleDatabase.getInstance(context).articleDao();
         savedArticleDao =ArticleDatabase.getInstance(context).savedArticleDao();
         restApiFactory = RestApiFactory.getInstance(context);
-        networkLiveData = new MutableLiveData<>();
+        articleLiveData = new MutableLiveData<>();
         appExecutor = AppExecutor.getInstance();
-        networkLiveData.observeForever(articles -> {
+        articleLiveData.observeForever(articles -> {
             if (articles != null){
                 appExecutor.getDiskIO().execute(new Runnable() {
                     @Override
@@ -54,17 +55,18 @@ public class ArticleRepository {
             @Override
             public void onChanged(List<Article> articles) {
                 if (articles != null){
-                    networkLiveData.setValue(articles);
+                    articleLiveData.setValue(articles);
                     networkData.removeObserver(this);
                 }
             }
         });
-        return networkData;
+        return articlesDao.getArticleByCategory(specification.getCategory());
     }
 
     public LiveData<List<Article>> getSavedArticles(){
         return savedArticleDao.getAllSaved();
     }
+
     public LiveData<Boolean> isSaved(int articleID){
         return savedArticleDao.isFavourite(articleID);
     }
@@ -75,7 +77,7 @@ public class ArticleRepository {
         appExecutor.getDiskIO().execute(() -> {
             SavedArticle article = new SavedArticle(articleID);
             savedArticleDao.insert(article);
-            System.out.println("Saved in database for reference :  %s " + articleID );
+            System.out.println("Saved in database for reference :  %s " + articleID);
         });
     }
 }

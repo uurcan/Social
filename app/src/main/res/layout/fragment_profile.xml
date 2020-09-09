@@ -40,10 +40,20 @@
             android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
+        <TextView
+            android:textColor="@color/black"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/saved_articles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/saved_article_recycler"
-        tools:listitem="@layout/item_feed"
+        tools:listitem="@layout/item_saved_article"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
     </LinearLayout>
 </layout>
