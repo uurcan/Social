@@ -4,24 +4,23 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.social.R;
+import com.example.social.listener.OnSavedItemClickListener;
 import com.example.social.model.feed.Article;
 
 import java.util.List;
-import java.util.Objects;
 
 public class SavedFeedAdapter extends RecyclerView.Adapter<SavedFeedAdapter.ViewHolder> {
     private Context context;
     private List<Article> articles;
+    private OnSavedItemClickListener onSavedItemClickListener;
 
     public SavedFeedAdapter(Context context, List<Article> articleList){
         this.context = context;
@@ -53,15 +52,23 @@ public class SavedFeedAdapter extends RecyclerView.Adapter<SavedFeedAdapter.View
         }
     }
 
+    public void setOnSavedItemClickListener(OnSavedItemClickListener onSavedItemClickListener) {
+        this.onSavedItemClickListener = onSavedItemClickListener;
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView imageViewSavedArticle;
         private TextView savedTextArticle;
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewSavedArticle = itemView.findViewById(R.id.saved_article_image);
             savedTextArticle = itemView.findViewById(R.id.saved_article_text);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            onSavedItemClickListener.onSavedItemClick(articles.get(getAdapterPosition()));
         }
     }
-
 }
