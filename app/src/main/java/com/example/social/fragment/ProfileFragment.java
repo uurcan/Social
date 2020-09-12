@@ -12,6 +12,8 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -31,7 +33,10 @@ import com.example.social.adapter.SavedFeedAdapter;
 import com.example.social.databinding.ProfileEditDialogBinding;
 import com.example.social.databinding.ProfileFragmentBinding;
 import com.example.social.datasource.FeedViewModel;
+import com.example.social.listener.OnSavedItemClickListener;
+import com.example.social.model.feed.Article;
 import com.example.social.model.messaging.Contact;
+import com.example.social.ui.FeedDetailsActivity;
 import com.example.social.utils.ImageViewUtils;
 import com.example.social.utils.SpannedGridLayoutManager;
 import com.google.android.gms.tasks.Continuation;
@@ -54,7 +59,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends Fragment implements View.OnClickListener, OnSavedItemClickListener {
     private static final String PARAM_LIST_STATE = "param-state";
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -107,6 +112,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profileFragmentBinding.layoutUserProfile.setOnClickListener(this);
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
         savedFeedAdapter = new SavedFeedAdapter(getContext(),null);
+        savedFeedAdapter.setOnSavedItemClickListener(this);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -297,6 +303,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private void restoreRecyclerViewState() {
         if (profileFragmentBinding.savedArticleRecycler.getLayoutManager() != null) {
             profileFragmentBinding.savedArticleRecycler.getLayoutManager().onRestoreInstanceState(feedListState);
+        }
+    }
+
+    @Override
+    public void onSavedItemClick(Article article) {
+        if (getActivity() != null && getView() != null) {
+            Intent intent = new Intent(getContext(), FeedDetailsActivity.class);
+            intent.putExtra(FeedDetailsActivity.PARAM_ARTICLE, article);
+            final LayoutAnimationController controller =
+                    AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_fall_down);
+            profileFragmentBinding.savedArticleRecycler.setLayoutAnimation(controller);
+            profileFragmentBinding.savedArticleRecycler.scheduleLayoutAnimation();
+            startActivity(intent);
+            if (getActivity() != null) {
+                getActivity().overridePendingTransition(R.anim.slide_up_animation, R.anim.fade_exit_transition);
+            }
         }
     }
 }

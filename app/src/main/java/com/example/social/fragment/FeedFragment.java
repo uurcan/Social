@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +48,7 @@ import java.util.List;
 import java.util.Objects;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
+import timber.log.Timber;
 
 public class FeedFragment extends Fragment implements OnFeedClickListener,
                                                       SwipeRefreshLayout.OnRefreshListener,
@@ -59,6 +59,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     private FeedViewModel viewModel;
     private Specification specification;
     private Article article;
+    private boolean isArticleSaved;
     private int pageIndex = 1;
     private ArticleRepository articleRepository;
 
@@ -83,9 +84,10 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         initializeToolbar();
         initializeCategories();
         initializeFeed();
+        getSavedArticleState();
         initializePageDirector();
         articleRepository = ArticleRepository.getInstance(getContext().getApplicationContext());
-        ItemTouchHelper.SimpleCallback itemCallback = new ItemTouchHelper.SimpleCallback(0,  ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback itemCallback = new ItemTouchHelper.SimpleCallback(0,  ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -93,34 +95,49 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                final Article article = feedListAdapter.getArticles().get(position);
+                Snackbar snackbar = Snackbar.make(viewHolder.itemView,"", Snackbar.LENGTH_LONG);;
                 try {
                     if (direction == ItemTouchHelper.RIGHT) {
-                        Snackbar snackbar = Snackbar.make(viewHolder.itemView, "Feed has been saved to your profile", Snackbar.LENGTH_LONG);
-                        snackbar.setAction(android.R.string.cancel, v -> {});
-                        snackbar.show();
+                        articleRepository.saveArticle(article.id);
+                        feedListAdapter.notifyDataSetChanged();
+                        snackbar.setText("Feed has been saved to your profile");
+                    } else if (direction == ItemTouchHelper.LEFT){
+                        if (isArticleSaved){
+                            //todo: needs work
+                            articleRepository.removeSavedArticle(article.id);
+                            feedListAdapter.notifyDataSetChanged();
+                            snackbar.setText("Article has been removed from your profile");
+                        } else {
+                            snackbar.setText("Article is not found in your profile");
+                        }
                     }
-                }catch(Exception e){
-                    Log.e("Feed Fragment", Objects.requireNonNull(e.getMessage()));
+                } catch(Exception e){
+                    Timber.tag("Feed Fragment").e(Objects.requireNonNull(e.getMessage()));
                 }
-                try {
-                    Thread.sleep(300);
-                    final int position = viewHolder.getAdapterPosition();
-                    final Article article = feedListAdapter.getArticles().get(position);
-                    articleRepository.saveArticle(article.id);
-                    feedListAdapter.notifyDataSetChanged();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                snackbar.setAction(android.R.string.cancel, v-> {});
+                snackbar.show();
             }
 
             @Override
             public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 if (getContext() != null) {
-                    new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                            .addSwipeRightBackgroundColor(Color.parseColor("#0B6623"))
-                            .addSwipeRightActionIcon(R.drawable.save_feed_item)
-                            .setSwipeRightLabelColor(Color.WHITE)
-                            .create().decorate();
+                    if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
+                        if (dX < 0){
+                            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                                    .addSwipeLeftBackgroundColor(Color.parseColor("#B31329"))
+                                    .addSwipeLeftActionIcon(R.drawable.delete_article_64)
+                                    .setSwipeLeftLabelColor(Color.WHITE)
+                                    .create().decorate();
+                        } else if (dX > 0) {
+                            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                                    .addSwipeRightBackgroundColor(Color.parseColor("#0B6623"))
+                                    .addSwipeRightActionIcon(R.drawable.save_feed_item)
+                                    .setSwipeRightLabelColor(Color.WHITE)
+                                    .create().decorate();
+                        }
+                    }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
@@ -128,6 +145,16 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemCallback);
         itemTouchHelper.attachToRecyclerView(fragmentFeedBinding.listFeed);
         return fragmentFeedBinding.getRoot();
+    }
+
+    private void getSavedArticleState() {
+        if (article != null){
+            articleRepository.isSaved(article.id).observe(this, aBoolean -> {
+                if (aBoolean != null){
+                    isArticleSaved = aBoolean;
+                }
+            });
+        }
     }
 
     private void initializeCategories() {

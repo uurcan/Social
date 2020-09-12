@@ -18,7 +18,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.example.social.R;
 import com.example.social.databinding.FeedItemBinding;
 import com.example.social.databinding.NetworkItemBinding;
 import com.example.social.listener.OnFeedClickListener;
@@ -26,7 +25,6 @@ import com.example.social.model.feed.Article;
 import com.example.social.utils.DateUtils;
 import com.example.social.utils.NetworkState;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
