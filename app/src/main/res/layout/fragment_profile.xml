@@ -55,5 +55,11 @@
         tools:listitem="@layout/item_saved_article"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+        <WebView
+            android:id="@+id/saved_item_web_view"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="WebViewLayout" />
     </LinearLayout>
 </layout>

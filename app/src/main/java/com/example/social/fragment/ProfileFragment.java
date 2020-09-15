@@ -1,8 +1,11 @@
 package com.example.social.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,12 +33,15 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.social.R;
+import com.example.social.adapter.FeedListAdapter;
 import com.example.social.adapter.SavedFeedAdapter;
+import com.example.social.database.ArticleRepository;
 import com.example.social.databinding.ProfileEditDialogBinding;
 import com.example.social.databinding.ProfileFragmentBinding;
 import com.example.social.datasource.FeedViewModel;
 import com.example.social.listener.OnSavedItemClickListener;
 import com.example.social.model.feed.Article;
+import com.example.social.model.feed.Feed;
 import com.example.social.model.messaging.Contact;
 import com.example.social.ui.FeedDetailsActivity;
 import com.example.social.utils.ImageViewUtils;
@@ -44,6 +51,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -59,7 +67,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ProfileFragment extends Fragment implements View.OnClickListener, OnSavedItemClickListener {
+public class ProfileFragment extends Fragment implements View.OnClickListener, OnSavedItemClickListener{
     private static final String PARAM_LIST_STATE = "param-state";
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -72,7 +80,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, O
     private HashMap<String,Object> hashMap = new HashMap<>();
     private Parcelable feedListState;
     private SavedFeedAdapter savedFeedAdapter;
-
+    private ArticleRepository articleRepository;
+    private FeedListAdapter feedListAdapter;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -107,6 +116,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, O
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         this.profileFragmentBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_profile, container, false);
+        feedListAdapter = new FeedListAdapter(null,getContext());
+        articleRepository = ArticleRepository.getInstance(getContext());
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         profileFragmentBinding.layoutUserProfile.setOnClickListener(this);
@@ -308,6 +319,39 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, O
 
     @Override
     public void onSavedItemClick(Article article) {
+        showArticleDetails(article);
+    }
+
+    @Override
+    public void onSavedItemLongClick(Article article) {
+        CharSequence[] options = new CharSequence[] {"Show Feed Details", "Display in Web","Remove Feed"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(true);
+        builder.setTitle(article.getTitle());
+        builder.setItems(options, (dialog, which) -> {
+            switch (which){
+                case 0:
+                    showArticleDetails(article);
+                    break;
+                case 1:
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(article.getUrl()));
+                    startActivity(intent);
+                    break;
+                case 2:
+                    articleRepository.removeSavedArticle(article.id);
+                    feedListAdapter.notifyDataSetChanged();
+                    Snackbar snackbar = Snackbar.make(getView(),"Item has been removed from your profile.", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                    break;
+            }
+        });
+        builder.setNegativeButton(getString(android.R.string.cancel), (dialog, which) -> {});
+        builder.show();
+    }
+
+    private void showArticleDetails(Article article){
         if (getActivity() != null && getView() != null) {
             Intent intent = new Intent(getContext(), FeedDetailsActivity.class);
             intent.putExtra(FeedDetailsActivity.PARAM_ARTICLE, article);

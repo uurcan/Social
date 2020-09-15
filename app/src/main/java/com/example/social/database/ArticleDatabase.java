@@ -24,7 +24,7 @@ public abstract class ArticleDatabase extends RoomDatabase {
                 instance =  Room.databaseBuilder(
                         context.getApplicationContext(),
                         ArticleDatabase.class,
-                        DATABASE_NAME).fallbackToDestructiveMigration().build();
+                        DATABASE_NAME).build();
             }
         }
         return instance;

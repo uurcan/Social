@@ -56,7 +56,7 @@ public class SavedFeedAdapter extends RecyclerView.Adapter<SavedFeedAdapter.View
         this.onSavedItemClickListener = onSavedItemClickListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener {
         private ImageView imageViewSavedArticle;
         private TextView savedTextArticle;
         ViewHolder(@NonNull View itemView) {
@@ -64,11 +64,18 @@ public class SavedFeedAdapter extends RecyclerView.Adapter<SavedFeedAdapter.View
             imageViewSavedArticle = itemView.findViewById(R.id.saved_article_image);
             savedTextArticle = itemView.findViewById(R.id.saved_article_text);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             onSavedItemClickListener.onSavedItemClick(articles.get(getAdapterPosition()));
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            onSavedItemClickListener.onSavedItemLongClick(articles.get(getAdapterPosition()));
+            return true;
         }
     }
 }

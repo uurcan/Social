@@ -21,7 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,9 +63,7 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     private ArticleRepository articleRepository;
 
 
-    public FeedFragment() {
-        // Required empty public constructor
-    }
+    public FeedFragment() { }
 
     public static FeedFragment newInstance() {
         return new FeedFragment();
@@ -78,15 +75,21 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        fragmentFeedBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_feed, container, false);
-        initializeToolbar();
-        initializeCategories();
-        initializeFeed();
-        getSavedArticleState();
-        initializePageDirector();
-        articleRepository = ArticleRepository.getInstance(getContext().getApplicationContext());
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (getContext() != null) {
+            fragmentFeedBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_feed, container, false);
+            articleRepository = ArticleRepository.getInstance(getContext().getApplicationContext());
+            initializeToolbar();
+            initializeCategories();
+            initializeFeed();
+            getSavedArticleState();
+            initializePageDirector();
+            initializeTouchHelper();
+        }
+        return fragmentFeedBinding.getRoot();
+    }
+
+    private void initializeTouchHelper() {
         ItemTouchHelper.SimpleCallback itemCallback = new ItemTouchHelper.SimpleCallback(0,  ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -97,7 +100,8 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 final int position = viewHolder.getAdapterPosition();
                 final Article article = feedListAdapter.getArticles().get(position);
-                Snackbar snackbar = Snackbar.make(viewHolder.itemView,"", Snackbar.LENGTH_LONG);;
+                Snackbar snackbar = Snackbar.make(viewHolder.itemView,"", Snackbar.LENGTH_LONG);
+                initializeArticleState(article);
                 try {
                     if (direction == ItemTouchHelper.RIGHT) {
                         articleRepository.saveArticle(article.id);
@@ -105,11 +109,11 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
                         snackbar.setText("Feed has been saved to your profile");
                     } else if (direction == ItemTouchHelper.LEFT){
                         if (isArticleSaved){
-                            //todo: needs work
                             articleRepository.removeSavedArticle(article.id);
                             feedListAdapter.notifyDataSetChanged();
                             snackbar.setText("Article has been removed from your profile");
                         } else {
+                            feedListAdapter.notifyDataSetChanged();
                             snackbar.setText("Article is not found in your profile");
                         }
                     }
@@ -118,6 +122,16 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
                 }
                 snackbar.setAction(android.R.string.cancel, v-> {});
                 snackbar.show();
+            }
+
+            private void initializeArticleState(Article article) {
+                if (getActivity() != null) {
+                    articleRepository.isSaved(article.id).observe(getActivity(), aBoolean -> {
+                        if (aBoolean != null) {
+                            isArticleSaved = aBoolean;
+                        }
+                    });
+                }
             }
 
             @Override
@@ -144,13 +158,12 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemCallback);
         itemTouchHelper.attachToRecyclerView(fragmentFeedBinding.listFeed);
-        return fragmentFeedBinding.getRoot();
     }
 
     private void getSavedArticleState() {
         if (article != null){
             articleRepository.isSaved(article.id).observe(this, aBoolean -> {
-                if (aBoolean != null){
+                if (aBoolean != null) {
                     isArticleSaved = aBoolean;
                 }
             });
@@ -210,12 +223,9 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
     private void initializeLiveData(){
         fragmentFeedBinding.listFeed.smoothScrollToPosition(0);
         fragmentFeedBinding.swipeRefreshFeed.setRefreshing(true);
-        viewModel.getPagedListLiveData(specification).observe(this, new Observer<List<Article>>() {
-            @Override
-            public void onChanged(List<Article> articles) {
-                if (articles != null) {
-                    feedListAdapter.setArticles(articles);
-                }
+        viewModel.getPagedListLiveData(specification).observe(this, articles -> {
+            if (articles != null) {
+                feedListAdapter.setArticles(articles);
             }
         });
         fragmentFeedBinding.swipeRefreshFeed.setRefreshing(false);
@@ -303,5 +313,9 @@ public class FeedFragment extends Fragment implements OnFeedClickListener,
         } else {
             Toast.makeText(getContext(), "Online !", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
     }
 }
