@@ -49,6 +49,7 @@ public class ArticleRepository {
         }
         return articleRepository;
     }
+
     public LiveData<List<Article>> getArticles(final Specification specification){
         final LiveData<List<Article>> networkData = restApiFactory.getArticles(specification);
         networkData.observeForever(new Observer<List<Article>>() {
@@ -60,7 +61,7 @@ public class ArticleRepository {
                 }
             }
         });
-        return articlesDao.getArticleByCategory(specification.getCategory());
+        return networkData;
     }
 
     public LiveData<List<Article>> getSavedArticles(){

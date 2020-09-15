@@ -40,7 +40,6 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         initializeToolbar();
         initializeComponents();
         initializeFeedDetails();
-        initializeWebView(article);
     }
 
     private void initializeComponents() {
@@ -60,7 +59,7 @@ public class FeedDetailsActivity extends AppCompatActivity implements AppBarLayo
         }
     }
     @SuppressLint("SetJavaScriptEnabled")
-    private void initializeWebView(Article article) {
+    public void initializeWebView(Article article) {
         WebView webView = findViewById(R.id.feed_detail_web_view);
         webView.getSettings().setLoadsImagesAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
