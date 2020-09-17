@@ -1,8 +1,8 @@
 # Social
 Social feed application for Android devices.
 
-View current news from your Country by in any language and any category ! <br />
-Find new friends, contact with them & join group chats.. <br />
+View recent news from your Country by in any language and any category ! <br />
+Find , contact with new friends & join group chats.. <br />
 Save any article you want to see later, customize your own profile ! <br />
 
 
