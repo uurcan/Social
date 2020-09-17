@@ -14,7 +14,7 @@ Save any article you want to see later, customize your own profile ! <br />
   <img width="180" height="350" src="https://imgur.com/QOYm2Nb.jpg">
 </p>       
 
-# Structures Being Used
+# Structures Used in the Project
 - Google Firebase <br />
 - Android Material Library <br/>
 - Bumptech Glide <br/>
